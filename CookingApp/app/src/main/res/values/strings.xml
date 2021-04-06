@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Cooking App</string>
+    <string name="login_title">Login</string>
+    <string name="login_button">Accedi</string>
+    <string name="register_button">Registrati</string>
+    <string name="guest_text">Oppure accedi come ospite</string>
+    <string name="register_link">Non hai un account? Registrati.</string>
+    <string name="login_link">Hai già un account? Accedi.</string>
+    <string name="register_title">Registrazione</string>
 </resources>
