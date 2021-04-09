@@ -8,12 +8,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private val TAG = "Register Activity"
-
     private fun gotoLoginPage(){
         val intent = Intent(this@RegisterActivity, MainActivity::class.java)
         startActivity(intent)
@@ -31,30 +32,37 @@ class RegisterActivity : AppCompatActivity() {
                 if (findViewById<TextView>(R.id.tf_email).text.isNotEmpty() && findViewById<TextView>(
                         R.id.tf_password
                     ).text.isNotEmpty() && findViewById<TextView>(R.id.tf_passwordAgain).text.isNotEmpty()) {
-                    if (findViewById<TextView>(R.id.tf_password).text.toString() == findViewById<TextView>(
-                            R.id.tf_passwordAgain
-                        ).text.toString()) {
-                        if (findViewById<TextView>(R.id.tf_password).text.length > 5) {
-                            auth.createUserWithEmailAndPassword(
-                                findViewById<TextView>(R.id.tf_email).text.toString(),
-                                findViewById<TextView>(
-                                    R.id.tf_password
-                                ).text.toString()
-                            )
-                                    .addOnCompleteListener{ task->
-                                        if (task.isSuccessful){
-                                            Log.d(TAG, "Registration: User created correctly")
-                                            auth.signOut()
-                                            gotoLoginPage()
-                                        } else {
-                                            Log.d(TAG, "Registration: Failed - ${task.toString()}")
+                        if(emailValidator(findViewById<TextView>(R.id.tf_email).text.toString())){
+                            if (findViewById<TextView>(R.id.tf_password).text.toString() == findViewById<TextView>(R.id.tf_passwordAgain).text.toString()) {
+                                if (passValidator(findViewById<TextView>(R.id.tf_password).text.toString()) && passValidator(
+                                        findViewById<TextView>(R.id.tf_passwordAgain).text.toString()
+                                    )
+                                ) {
+                                    auth.createUserWithEmailAndPassword(
+                                        findViewById<TextView>(R.id.tf_email).text.toString(),
+                                        findViewById<TextView>(
+                                            R.id.tf_password
+                                        ).text.toString()
+                                    )
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                Log.d(TAG, "Registration: User created correctly")
+                                                auth.signOut()
+                                                gotoLoginPage()
+                                            } else {
+                                                Log.d(
+                                                    TAG,
+                                                    "Registration: Failed - ${task.toString()}"
+                                                )
+                                            }
                                         }
-                                    }
-                        } else {
-                            Log.d(TAG, "Error: Password too short")
-                        }
+                                } else {
+                                    Log.d(TAG, "Error: Password RegEx error")
+                                }
+                            }else
+                                Log.d(TAG, "Error: Password mismatch")
                     } else {
-                        Log.d(TAG, "Error: Password mismatch")
+                        Log.d(TAG, "Error: Email RegEx error")
                     }
                 } else {
                     Log.d(TAG, "Error: Field empty")
@@ -66,5 +74,17 @@ class RegisterActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    fun passValidator(text: String?):Boolean{
+        val pattern: Pattern = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$ %^&*-]).{8,}\$")
+        val matcher: Matcher = pattern.matcher(text)
+        return matcher.matches()
+    }
+
+    fun emailValidator(text: String?):Boolean{
+        val pattern: Pattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)\$")
+        val matcher: Matcher = pattern.matcher(text)
+        return matcher.matches()
     }
 }
