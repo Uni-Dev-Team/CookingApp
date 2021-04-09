@@ -2,6 +2,7 @@ package com.unidevteam.cookingapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -10,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : AppCompatActivity() {
@@ -20,7 +22,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -34,20 +35,11 @@ class MainActivity : AppCompatActivity() {
 
         // Buttons Listener
 
-        findViewById<Button>(R.id.btn_checkUserStatus).setOnClickListener {
-            Log.d(TAG, "Button user status pressed")
-            firebaseCheckUserStatus()
-        }
-
         findViewById<TextView>(R.id.lb_registerPage).setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
 
-        findViewById<TextView>(R.id.btn_logout).setOnClickListener {
-            Log.d(TAG, "Button Logout pressed")
-            firebaseAuthSignOut()
-        }
 
         findViewById<TextView>(R.id.lb_guest).setOnClickListener {
             Log.d(TAG, "Label guest pressed")
@@ -68,21 +60,31 @@ class MainActivity : AppCompatActivity() {
             if (findViewById<TextView>(R.id.tf_email).text.toString().isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.toString().isNotEmpty()){
                 Log.d(TAG, "Text filled")
                 firebaseAuthWithEmailAndPassword(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
+                if (firebaseCheckUserStatus()) {
+                    gotoProfilePage()
+                }
             } else {
                 Log.d(TAG, "Text not filled")
             }
         }
     }
-
-
     // Functions
 
+    // [START goto_login_page]
+    private fun gotoProfilePage(){
+        val intent = Intent(this@MainActivity, ProfileActivity::class.java)
+        startActivity(intent)
+    }
+    // [END goto_login_page]
+
     // [START auth_status]
-    private fun firebaseCheckUserStatus() {
+    private fun firebaseCheckUserStatus(): Boolean {
         if (auth.currentUser != null) {
             Log.d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser.email.toString()}")
+            return true
         } else {
             Log.d(TAG, "Sign-in status: Not logged")
+            return false
         }
 
     }
@@ -92,7 +94,6 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task->
                 if(task.isSuccessful) {
                     Log.d(TAG, "SignIn with email and password: Success!")
-                    val user = auth.currentUser
                 } else {
                     Log.d(TAG, "SignIn with email and password: Failed - ${task.toString()}")
                 }
@@ -103,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     // [START auth_anonymously]
     private fun firebaseAuthAnonymously() {
         auth.signInAnonymously()
-            .addOnCompleteListener {task->
+            .addOnCompleteListener { task->
                 if (task.isSuccessful) {
                     Log.d(TAG, "SignIn anonymously: Success!")
                 } else {
@@ -145,16 +146,4 @@ class MainActivity : AppCompatActivity() {
             }
     }
     // [END auth_password_forgotten]
-
-    // [START auth_sign_out]
-    private fun firebaseAuthSignOut() {
-        if (auth.currentUser.isAnonymous) { auth.currentUser.delete() }
-        auth.signOut()
-        if (auth.currentUser == null) {
-            Log.d(TAG, "User signed oud")
-        } else {
-            Log.d(TAG, "Error: User not signed oud")
-        }
-    }
-    // [END auth_sign_out]
 }

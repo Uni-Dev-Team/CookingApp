@@ -1,122 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/tf_email"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toTopOf="@+id/tf_password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+<EditText
+    android:id="@+id/tf_email"
+    android:layout_width="213dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="28dp"
+    android:ems="10"
+    android:hint="Email"
+    android:inputType="textEmailAddress"
+    app:layout_constraintBottom_toTopOf="@+id/tf_password"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
-        android:text="@string/login_title"
-        android:textSize="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/login_title" />
+<TextView
+    android:id="@+id/textView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="132dp"
+    android:text="@string/login_title"
+    android:textSize="40dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:text="@string/login_title" />
 
-    <EditText
-        android:id="@+id/tf_password"
-        android:layout_width="213dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_email" />
+<EditText
+    android:id="@+id/tf_password"
+    android:layout_width="213dp"
+    android:layout_height="40dp"
+    android:layout_marginTop="12dp"
+    android:ems="10"
+    android:hint="Password"
+    android:inputType="textPassword"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.497"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tf_email" />
 
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="213dp"
-        android:layout_height="38dp"
-        android:text="@string/login_button"
-        app:layout_constraintBottom_toTopOf="@+id/lb_registerPage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_password"
-        app:layout_constraintVertical_bias="0.394" />
+<Button
+    android:id="@+id/btn_login"
+    android:layout_width="213dp"
+    android:layout_height="38dp"
+    android:text="@string/login_button"
+    app:layout_constraintBottom_toTopOf="@+id/lb_registerPage"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tf_password"
+    app:layout_constraintVertical_bias="0.394" />
 
-    <TextView
-        android:id="@+id/lb_registerPage"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="29dp"
-        android:clickable="true"
-        android:text="@string/register_link"
-        app:layout_constraintBottom_toTopOf="@+id/lb_guest"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+<TextView
+    android:id="@+id/lb_registerPage"
+    android:layout_width="213dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="29dp"
+    android:clickable="true"
+    android:text="@string/register_link"
+    app:layout_constraintBottom_toTopOf="@+id/lb_guest"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
-    <TextView
-        android:id="@+id/lb_guest"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:clickable="true"
-        android:text="@string/guest_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lb_registerPage" />
-
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="50dp"
-        android:text="Logout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lb_guest" />
-
-    <Button
-        android:id="@+id/btn_checkUserStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="Check User"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_logout"
-        app:layout_constraintTop_toBottomOf="@+id/lb_guest" />
+<TextView
+    android:id="@+id/lb_guest"
+    android:layout_width="213dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:clickable="true"
+    android:text="@string/guest_text"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/lb_registerPage" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btn_googleSignin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginBottom="80dp"
         android:text="G"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/lb_passwordForgotten"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:text="Did you forgot the password?"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lb_guest" />
+    android:id="@+id/lb_passwordForgotten"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:clickable="true"
+    android:text="Did you forgot the password?"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/lb_guest" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

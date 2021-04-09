@@ -13,12 +13,8 @@ import java.util.regex.Pattern
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private val TAG = "Register Activity"
+    private val TAG = "RegisterActivity"
 
-    private fun gotoLoginPage(){
-        val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-        startActivity(intent)
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -33,28 +29,7 @@ class RegisterActivity : AppCompatActivity() {
                     if (emailValidator(findViewById<TextView>(R.id.tf_email).text.toString())) {
                         if (findViewById<TextView>(R.id.tf_password).text.toString() == findViewById<TextView>(R.id.tf_passwordAgain).text.toString()) {
                             if (passValidator(findViewById<TextView>(R.id.tf_password).text.toString())) {
-                                auth.createUserWithEmailAndPassword(
-                                        findViewById<TextView>(R.id.tf_email).text.toString(),
-                                        findViewById<TextView>(
-                                                R.id.tf_password
-                                        ).text.toString()
-                                )
-                                        .addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                Log.d(TAG, "Registration: User created correctly")
-                                                (auth.currentUser as FirebaseUser).sendEmailVerification().addOnCompleteListener { task2 ->
-                                                    if (task2.isSuccessful) {
-                                                        Log.d(TAG, "Email: sent")
-                                                    } else {
-                                                        Log.d(TAG, "Email: Failed - ${task.exception}")
-                                                    }
-                                                }
-                                                auth.signOut()
-                                                gotoLoginPage()
-                                            } else {
-                                                Log.d(TAG, "Registration: Failed - ${task.exception}")
-                                            }
-                                        }
+                                firebaseCreateUser(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
                             } else {
                                 Log.d(TAG, "Error: Password Regex mismatch")
                             }
@@ -70,20 +45,58 @@ class RegisterActivity : AppCompatActivity() {
 
             } else {
                 Log.d(TAG, "Error: User already logged")
-                val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-                startActivity(intent)
+                gotoLoginPage()
             }
         }
     }
+    // [START goto_login_page]
+    private fun gotoLoginPage(){
+        val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+        startActivity(intent)
+    }
+    // [END goto_login_page]
+
+    // [START password_regex]
     private fun passValidator(text: String?):Boolean{
         val pattern: Pattern = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$ %^&*-]).{8,}\$")
         val matcher: Matcher = pattern.matcher(text)
         return matcher.matches()
     }
+    // [END password_regex]
 
+    // [START email_regex]
     private fun emailValidator(text: String?):Boolean{
         val pattern: Pattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)\$")
         val matcher: Matcher = pattern.matcher(text)
         return matcher.matches()
     }
+    // [END email_regex]
+
+    // [START create_user]
+    private fun firebaseCreateUser(email: String, password: String) {
+        auth.createUserWithEmailAndPassword( email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "Registration: User created correctly")
+                        firebaseSendPasswordVerification(auth.currentUser)
+                        auth.signOut()
+                        gotoLoginPage()
+                    } else {
+                        Log.d(TAG, "Registration: Failed - ${task.exception}")
+                    }
+                }
+    }
+    // [END create_user]
+
+    // [START send_verification_email]
+    private fun firebaseSendPasswordVerification(user: FirebaseUser) {
+        user.sendEmailVerification().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "Email: sent")
+            } else {
+                Log.d(TAG, "Email: Failed - ${task.exception}")
+            }
+        }
+    }
+    // [END send_verification_email]
 }
