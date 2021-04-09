@@ -34,37 +34,42 @@ class MainActivity : AppCompatActivity() {
 
         // Buttons Listener
 
-        findViewById<Button>(R.id.btn_checkUserStatus).setOnClickListener{
-            Log.v(TAG, "Button user status pressed")
+        findViewById<Button>(R.id.btn_checkUserStatus).setOnClickListener {
+            Log.d(TAG, "Button user status pressed")
             firebaseCheckUserStatus()
         }
 
-        findViewById<TextView>(R.id.lb_registerPage).setOnClickListener{
+        findViewById<TextView>(R.id.lb_registerPage).setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
 
         findViewById<TextView>(R.id.btn_logout).setOnClickListener {
-            Log.v(TAG, "Button Logout pressed")
+            Log.d(TAG, "Button Logout pressed")
             firebaseAuthSignOut()
         }
 
         findViewById<TextView>(R.id.lb_guest).setOnClickListener {
-            Log.v(TAG, "Label guest pressed")
+            Log.d(TAG, "Label guest pressed")
             firebaseAuthAnonymously()
         }
 
+        findViewById<TextView>(R.id.lb_passwordForgotten).setOnClickListener {
+            Log.d(TAG, "Password reset pressed")
+            firebasePasswordReset(findViewById<TextView>(R.id.tf_email).text.toString())
+        }
+
         findViewById<com.google.android.gms.common.SignInButton>(R.id.btn_googleSignin).setOnClickListener {
-            Log.v(TAG, "Button google login pressed")
+            Log.d(TAG, "Button google login pressed")
         }
 
         findViewById<Button>(R.id.btn_login).setOnClickListener {
-            Log.v(TAG, "Button Login pressed")
+            Log.d(TAG, "Button Login pressed")
             if (findViewById<TextView>(R.id.tf_email).text.toString().isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.toString().isNotEmpty()){
-                Log.v(TAG, "Text filled")
+                Log.d(TAG, "Text filled")
                 firebaseAuthWithEmailAndPassword(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
             } else {
-                Log.v(TAG, "Text not filled")
+                Log.d(TAG, "Text not filled")
             }
         }
     }
@@ -119,22 +124,36 @@ class MainActivity : AppCompatActivity() {
                     val user = auth.currentUser
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Log.d(TAG, "signInWithCredential:failure", task.exception)
                 }
             }
     }
     // [END auth_with_google]
 
-    // [START auth_sign_out]
-    private fun firebaseAuthSignOut(){
-        auth.signInAnonymously()
-            .addOnCompleteListener(this){ task->
+    // [START auth_password_forgotten]
+    private fun firebasePasswordReset(email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "SignIn anonymously: Success!")
+                    // Password reset sent
+                    Log.d(TAG, "Email reset: sent")
+                    val user = auth.currentUser
                 } else {
-                    Log.d(TAG, "SignIn anonymously: Failed - ${task.toString()}")
+                    // If sign in fails, display a message to the user.
+                    Log.d(TAG, "Email reset: failure", task.exception)
                 }
             }
+    }
+    // [END auth_password_forgotten]
+
+    // [START auth_sign_out]
+    private fun firebaseAuthSignOut(){
+        auth.signOut()
+        if (auth.currentUser == null) {
+            Log.d(TAG, "User signed oud")
+        } else {
+            Log.d(TAG, "Error: User not signed oud")
+        }
     }
     // [END auth_sign_out]
 }
