@@ -98,4 +98,14 @@
         app:layout_constraintStart_toEndOf="@+id/btn_logout"
         app:layout_constraintTop_toBottomOf="@+id/lb_guest" />
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btn_googleSignin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="G"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
