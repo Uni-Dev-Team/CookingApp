@@ -44,10 +44,17 @@ class RegisterActivity : AppCompatActivity() {
                                     .addOnCompleteListener{ task->
                                         if (task.isSuccessful){
                                             Log.d(TAG, "Registration: User created correctly")
+                                            (auth.currentUser as FirebaseUser).sendEmailVerification().addOnCompleteListener { task2->
+                                                if (task2.isSuccessful) {
+                                                    Log.d(TAG, "Email: sent")
+                                                } else {
+                                                    Log.d(TAG, "Email: Failed - ${task.exception}")
+                                                }
+                                            }
                                             auth.signOut()
                                             gotoLoginPage()
                                         } else {
-                                            Log.d(TAG, "Registration: Failed - ${task.toString()}")
+                                            Log.d(TAG, "Registration: Failed - ${task.exception}")
                                         }
                                     }
                         } else {

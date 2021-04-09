@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     // [START auth_status]
     private fun firebaseCheckUserStatus() {
         if (auth.currentUser != null) {
-            Log.d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser.email}")
+            Log.d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser.email.toString()}")
         } else {
             Log.d(TAG, "Sign-in status: Not logged")
         }
