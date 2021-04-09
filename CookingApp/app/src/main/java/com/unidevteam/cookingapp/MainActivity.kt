@@ -147,7 +147,8 @@ class MainActivity : AppCompatActivity() {
     // [END auth_password_forgotten]
 
     // [START auth_sign_out]
-    private fun firebaseAuthSignOut(){
+    private fun firebaseAuthSignOut() {
+        if (auth.currentUser.isAnonymous) { auth.currentUser.delete() }
         auth.signOut()
         if (auth.currentUser == null) {
             Log.d(TAG, "User signed oud")
