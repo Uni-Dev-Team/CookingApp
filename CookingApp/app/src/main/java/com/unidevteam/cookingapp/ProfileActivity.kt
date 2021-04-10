@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 class ProfileActivity : AppCompatActivity() {
-    private val TAG = "Profile Activity"
     private val user: FirebaseUser = FirebaseAuth.getInstance().currentUser
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,4 +49,8 @@ class ProfileActivity : AppCompatActivity() {
         startActivity(intent)
     }
     // [END goto_login_page]
+
+    companion object {
+        private const val TAG = "ProfileActivity"
+    }
 }

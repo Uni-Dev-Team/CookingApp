@@ -13,7 +13,6 @@ import java.util.regex.Pattern
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private val TAG = "RegisterActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,4 +98,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
     // [END send_verification_email]
+
+    companion object {
+        private const val TAG = "RegisterActivity"
+    }
 }

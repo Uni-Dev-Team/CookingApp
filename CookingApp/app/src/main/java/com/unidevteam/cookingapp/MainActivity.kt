@@ -10,6 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -165,6 +166,10 @@ class MainActivity : AppCompatActivity() {
     }
     // [END auth_with_google]
 
+    // [START auth_with_facebook]
+
+    // [END auth_with_facebook]
+
     // [START auth_password_forgotten]
     private fun firebasePasswordReset(email: String) {
         auth.sendPasswordResetEmail(email)
@@ -182,7 +187,7 @@ class MainActivity : AppCompatActivity() {
 
 
     companion object {
-        private const val TAG = "GoogleActivity"
+        private const val TAG = "LoginActivity"
         private const val RC_SIGN_IN = 9001
     }
 }
