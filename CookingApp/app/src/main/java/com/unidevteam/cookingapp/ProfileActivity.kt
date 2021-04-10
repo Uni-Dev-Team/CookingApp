@@ -10,18 +10,20 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 class ProfileActivity : AppCompatActivity() {
-    private  val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private var firebaseUser: FirebaseUser = FirebaseAuth.getInstance().currentUser
     private val TAG = "Profile Activity"
-
+    private val user: FirebaseUser = FirebaseAuth.getInstance().currentUser
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+        if (user != null) {
+            findViewById<TextView>(R.id.lb_profileId).text = "Profile ID: ${user.uid}"
+            findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user.displayName}"
+            findViewById<TextView>(R.id.lb_email).text = "Email: ${user.email}"
+            findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user.isEmailVerified.toString()}"
+        } else {
+            gotoLoginPage()
+        }
 
-        findViewById<TextView>(R.id.lb_profileId).text = "Profile ID: ${firebaseUser.uid}"
-        findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${firebaseUser.displayName}"
-        findViewById<TextView>(R.id.lb_email).text = "Email: ${firebaseUser.email}"
-        findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${firebaseUser.isEmailVerified.toString()}"
         findViewById<TextView>(R.id.btn_logout).setOnClickListener {
             Log.d(TAG, "Button Logout pressed")
             firebaseAuthSignOut()
@@ -31,6 +33,7 @@ class ProfileActivity : AppCompatActivity() {
     }
     // [START auth_sign_out]
     private fun firebaseAuthSignOut() {
+        val auth: FirebaseAuth = FirebaseAuth.getInstance()
         if (auth.currentUser.isAnonymous) { auth.currentUser.delete() }
         auth.signOut()
         if (auth.currentUser == null) {

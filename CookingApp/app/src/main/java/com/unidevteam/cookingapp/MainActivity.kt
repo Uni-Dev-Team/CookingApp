@@ -2,7 +2,6 @@ package com.unidevteam.cookingapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -10,13 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private val TAG = "Login Activity"
     private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<com.google.android.gms.common.SignInButton>(R.id.btn_googleSignin).setOnClickListener {
             Log.d(TAG, "Button google login pressed")
+            firebaseSignInWithGoogle()
         }
 
         findViewById<Button>(R.id.btn_login).setOnClickListener {
@@ -62,10 +62,21 @@ class MainActivity : AppCompatActivity() {
                 firebaseAuthWithEmailAndPassword(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
                 if (firebaseCheckUserStatus()) {
                     gotoProfilePage()
+                } else {
+                    Log.d(TAG, "Not logged")
                 }
             } else {
                 Log.d(TAG, "Text not filled")
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser: FirebaseUser? = auth.currentUser
+        if (currentUser != null) {
+            gotoProfilePage()
         }
     }
     // Functions
@@ -79,12 +90,12 @@ class MainActivity : AppCompatActivity() {
 
     // [START auth_status]
     private fun firebaseCheckUserStatus(): Boolean {
-        if (auth.currentUser != null) {
+        return if (auth.currentUser != null) {
             Log.d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser.email.toString()}")
-            return true
+            true
         } else {
             Log.d(TAG, "Sign-in status: Not logged")
-            return false
+            false
         }
 
     }
@@ -118,16 +129,39 @@ class MainActivity : AppCompatActivity() {
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.d(TAG, "signInWithCredential:failure", task.exception)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success")
+                        gotoProfilePage()
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    }
                 }
+    }
+
+    private fun firebaseSignInWithGoogle() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e)
             }
+        }
     }
     // [END auth_with_google]
 
@@ -138,7 +172,6 @@ class MainActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Password reset sent
                     Log.d(TAG, "Email reset: sent")
-                    val user = auth.currentUser
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "Email reset: failure", task.exception)
@@ -146,4 +179,10 @@ class MainActivity : AppCompatActivity() {
             }
     }
     // [END auth_password_forgotten]
+
+
+    companion object {
+        private const val TAG = "GoogleActivity"
+        private const val RC_SIGN_IN = 9001
+    }
 }
