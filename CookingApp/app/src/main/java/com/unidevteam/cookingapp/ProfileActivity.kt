@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
@@ -22,8 +23,11 @@ class ProfileActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user.displayName}"
             findViewById<TextView>(R.id.lb_email).text = "Email: ${user.email}"
             findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user.isEmailVerified.toString()}"
-            if (user.photoUrl == null)
+            if (user.photoUrl == null) {
                 findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
+            } else {
+                    com.squareup.picasso.Picasso.get().load(user.photoUrl).into(findViewById<ImageView>(R.id.img_profile))
+                }
         } else {
             gotoLoginPage()
         }
@@ -36,6 +40,10 @@ class ProfileActivity : AppCompatActivity() {
 
         findViewById<ImageView>(R.id.img_profile).setOnClickListener {
             // TODO: 4/12/2021 Intent chooser between camera shot & browsing for the profile picture
+            // Create an instance of the dialog fragment and show it
+            val dialog = DialogPicker()
+            dialog.show(supportFragmentManager, TAG)
+            Log.d(TAG, "EXIT String: ${dialog.exitTransition.toString()}")
         }
 
     }
