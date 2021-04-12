@@ -6,18 +6,27 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginResult
+import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
+@Suppress("UNREACHABLE_CODE")
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var callbackManager: CallbackManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +38,13 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        // Configure Facebook Sign In
+        // Initialize Facebook Login button
+        callbackManager = CallbackManager.Factory.create()
+        // Set permission
+        findViewById<LoginButton>(R.id.btn_facebookSignIn).setPermissions("email", "public_profile")
+
 
         // Firebase
         auth = FirebaseAuth.getInstance()
@@ -51,9 +67,14 @@ class MainActivity : AppCompatActivity() {
             firebasePasswordReset(findViewById<TextView>(R.id.tf_email).text.toString())
         }
 
-        findViewById<com.google.android.gms.common.SignInButton>(R.id.btn_googleSignin).setOnClickListener {
+        findViewById<SignInButton>(R.id.btn_googleSignIn).setOnClickListener {
             Log.d(TAG, "Button google login pressed")
             firebaseSignInWithGoogle()
+        }
+
+        findViewById<LoginButton>(R.id.btn_facebookSignIn).setOnClickListener {
+            Log.d(TAG, "Button facebook login pressed")
+            firebaseSignInWithFacebook()
         }
 
         findViewById<Button>(R.id.btn_login).setOnClickListener {
@@ -162,11 +183,50 @@ class MainActivity : AppCompatActivity() {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
             }
+
+            // Pass the activity result back to the Facebook SDK
+            callbackManager.onActivityResult(requestCode, resultCode, data)
         }
     }
     // [END auth_with_google]
 
     // [START auth_with_facebook]
+    private fun firebaseSignInWithFacebook() {
+
+        findViewById<LoginButton>(R.id.btn_facebookSignIn).registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                Log.d(TAG, "facebook:onSuccess:$loginResult")
+                handleFacebookAccessToken(loginResult.accessToken)
+            }
+
+            override fun onCancel() {
+                Log.d(TAG, "facebook:onCancel")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.d(TAG, "facebook:onError", error)
+            }
+        })
+    }
+
+
+    private fun handleFacebookAccessToken(token: AccessToken) {
+        Log.d(TAG, "handleFacebookAccessToken:$token")
+
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    gotoProfilePage()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                }
+            }
+    }
+
 
     // [END auth_with_facebook]
 

@@ -7,4 +7,10 @@
     <string name="register_link">Non hai un account? Registrati.</string>
     <string name="login_link">Hai già un account? Accedi.</string>
     <string name="register_title">Registrazione</string>
+
+
+    // Facebook Login
+    <string name="facebook_app_id">285084103195286</string>
+    <string name="fb_login_protocol_scheme">fb285084103195286</string>
+
 </resources>
