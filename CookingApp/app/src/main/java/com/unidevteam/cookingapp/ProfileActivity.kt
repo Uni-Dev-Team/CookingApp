@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.squareup.picasso.Picasso
 
 class ProfileActivity : AppCompatActivity() {
     private val user: FirebaseUser = FirebaseAuth.getInstance().currentUser
@@ -26,7 +27,7 @@ class ProfileActivity : AppCompatActivity() {
             if (user.photoUrl == null) {
                 findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
             } else {
-                    com.squareup.picasso.Picasso.get().load(user.photoUrl).into(findViewById<ImageView>(R.id.img_profile))
+                    Picasso.get().load(user.photoUrl).into(findViewById<ImageView>(R.id.img_profile))
                 }
         } else {
             gotoLoginPage()
