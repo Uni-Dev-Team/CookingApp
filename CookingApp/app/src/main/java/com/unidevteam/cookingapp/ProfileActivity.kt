@@ -1,17 +1,20 @@
 package com.unidevteam.cookingapp
 
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+
 
 class ProfileActivity : AppCompatActivity() {
     private val user: FirebaseUser = FirebaseAuth.getInstance().currentUser
@@ -39,11 +42,22 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         findViewById<ImageView>(R.id.img_profile).setOnClickListener {
-            // TODO: 4/12/2021 Intent chooser between camera shot & browsing for the profile picture
             // Create an instance of the dialog fragment and show it
-            val dialog = DialogPicker()
-            dialog.show(supportFragmentManager, TAG)
-            Log.d(TAG, "EXIT String: ${dialog.exitTransition.toString()}")
+
+            // Use the Builder class for convenient dialog construction
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Choose source: ")
+                    .setPositiveButton("Camera",
+                            DialogInterface.OnClickListener { _, _ ->
+                                cameraShot()
+                            })
+                    .setNegativeButton("File",
+                            DialogInterface.OnClickListener { _, _ ->
+                                fileChooser()
+                            })
+            // AlertDialog Builder class
+           val dialog: AlertDialog.Builder = builder
+            dialog.show()
         }
 
     }
@@ -58,6 +72,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
+            Log.d(TAG, "Info: ${imageBitmap.toString()}")
             // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
         }
     }
@@ -86,9 +101,11 @@ class ProfileActivity : AppCompatActivity() {
    }
     // [END file_chooser]
     private fun cameraShot() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+
         try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
         } catch (e: ActivityNotFoundException) {
             // display error state to the user
         }
