@@ -1,15 +1,18 @@
 package com.unidevteam.cookingapp
 
 import android.content.Intent
+import android.media.FaceDetector
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.internal.CallbackManagerImpl
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -101,6 +104,28 @@ class MainActivity : AppCompatActivity() {
             gotoProfilePage()
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e)
+            }
+        }
+        if (requestCode == CallbackManagerImpl.RequestCodeOffset.Login.toRequestCode()) {
+            // Pass the activity result back to the Facebook SDK
+            callbackManager.onActivityResult(requestCode, resultCode, data)
+        }
+    }
     // Functions
 
     // [START goto_login_page]
@@ -109,7 +134,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
     // [END goto_login_page]
-
     // [START auth_status]
     private fun firebaseCheckUserStatus(): Boolean {
         return if (auth.currentUser != null) {
@@ -127,6 +151,7 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task->
                 if(task.isSuccessful) {
                     Log.d(TAG, "SignIn with email and password: Success!")
+                    gotoProfilePage()
                 } else {
                     Log.d(TAG, "SignIn with email and password: Failed - ${task.toString()}")
                 }
@@ -166,27 +191,6 @@ class MainActivity : AppCompatActivity() {
     private fun firebaseSignInWithGoogle() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)!!
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-                firebaseAuthWithGoogle(account.idToken!!)
-            } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e)
-            }
-
-            // Pass the activity result back to the Facebook SDK
-            callbackManager.onActivityResult(requestCode, resultCode, data)
-        }
     }
     // [END auth_with_google]
 
@@ -247,7 +251,7 @@ class MainActivity : AppCompatActivity() {
 
 
     companion object {
-        private const val TAG = "LoginActivity"
+        private const val TAG = "MainActivity"
         private const val RC_SIGN_IN = 9001
     }
 }
