@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
         android:text="@string/register_title"
-        android:textSize="40dp"
+        android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/tf_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +23,7 @@
         android:layout_width="213dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Register"
+        android:text="@string/register_button"
         app:layout_constraintBottom_toTopOf="@+id/lb_loginPage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
@@ -40,21 +40,23 @@
         android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/tf_passwordAgain"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_email" />
+        app:layout_constraintTop_toBottomOf="@+id/tf_email"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/tf_passwordAgain"
         android:layout_width="213dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Conferma password"
+        android:hint="Confirm password"
         android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/btn_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tf_password"
-        app:layout_constraintVertical_bias="0.358" />
+        app:layout_constraintVertical_bias="0.358"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/tf_email"
@@ -67,7 +69,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/lb_loginPage"

@@ -1,11 +1,9 @@
 package com.unidevteam.cookingapp
 
 import android.content.Intent
-import android.media.FaceDetector
 import android.os.Bundle
-import android.util.Log
+import android.util.Log.*
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.AccessToken
@@ -25,22 +23,27 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
-@Suppress("UNREACHABLE_CODE")
 class MainActivity : AppCompatActivity() {
+
+    // [START declare_auth]
     private lateinit var auth: FirebaseAuth
+    // [END declare_auth]
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var callbackManager: CallbackManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // [START config_signing]
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
+        // [END config_signing]
 
         // Configure Facebook Sign In
         // Initialize Facebook Login button
@@ -61,37 +64,37 @@ class MainActivity : AppCompatActivity() {
 
 
         findViewById<TextView>(R.id.lb_guest).setOnClickListener {
-            Log.d(TAG, "Label guest pressed")
+            d(TAG, "Label guest pressed")
             firebaseAuthAnonymously()
         }
 
         findViewById<TextView>(R.id.lb_passwordForgotten).setOnClickListener {
-            Log.d(TAG, "Password reset pressed")
+            d(TAG, "Password reset pressed")
             firebasePasswordReset(findViewById<TextView>(R.id.tf_email).text.toString())
         }
 
         findViewById<SignInButton>(R.id.btn_googleSignIn).setOnClickListener {
-            Log.d(TAG, "Button google login pressed")
+            d(TAG, "Button google login pressed")
             firebaseSignInWithGoogle()
         }
 
         findViewById<LoginButton>(R.id.btn_facebookSignIn).setOnClickListener {
-            Log.d(TAG, "Button facebook login pressed")
+            d(TAG, "Button facebook login pressed")
             firebaseSignInWithFacebook()
         }
 
         findViewById<Button>(R.id.btn_login).setOnClickListener {
-            Log.d(TAG, "Button Login pressed")
+            d(TAG, "Button Login pressed")
             if (findViewById<TextView>(R.id.tf_email).text.toString().isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.toString().isNotEmpty()){
-                Log.d(TAG, "Text filled")
+                d(TAG, "Text filled")
                 firebaseAuthWithEmailAndPassword(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
                 if (firebaseCheckUserStatus()) {
                     gotoProfilePage()
                 } else {
-                    Log.d(TAG, "Not logged")
+                    d(TAG, "Not logged")
                 }
             } else {
-                Log.d(TAG, "Text not filled")
+                d(TAG, "Text not filled")
             }
         }
     }
@@ -114,11 +117,11 @@ class MainActivity : AppCompatActivity() {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                d(TAG, "firebaseAuthWithGoogle: $account.id")
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e)
+                d(TAG, "Google sign in failed: $e")
             }
         }
         if (requestCode == CallbackManagerImpl.RequestCodeOffset.Login.toRequestCode()) {
@@ -126,6 +129,8 @@ class MainActivity : AppCompatActivity() {
             callbackManager.onActivityResult(requestCode, resultCode, data)
         }
     }
+
+
     // Functions
 
     // [START goto_login_page]
@@ -134,13 +139,15 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
     // [END goto_login_page]
+
+
     // [START auth_status]
     private fun firebaseCheckUserStatus(): Boolean {
         return if (auth.currentUser != null) {
-            Log.d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser.email.toString()}")
+            d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser.email}")
             true
         } else {
-            Log.d(TAG, "Sign-in status: Not logged")
+            d(TAG, "Sign-in status: Not logged")
             false
         }
 
@@ -150,10 +157,10 @@ class MainActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task->
                 if(task.isSuccessful) {
-                    Log.d(TAG, "SignIn with email and password: Success!")
+                    d(TAG, "SignIn with email and password: Success!")
                     gotoProfilePage()
                 } else {
-                    Log.d(TAG, "SignIn with email and password: Failed - ${task.toString()}")
+                    d(TAG, "SignIn with email and password: Failed - $task")
                 }
             }
     }
@@ -164,9 +171,10 @@ class MainActivity : AppCompatActivity() {
         auth.signInAnonymously()
             .addOnCompleteListener { task->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "SignIn anonymously: Success!")
+                    d(TAG, "SignIn anonymously: Success!")
+                    gotoProfilePage()
                 } else {
-                    Log.d(TAG, "SignIn anonymously: Failed - ${task.toString()}")
+                    d(TAG, "SignIn anonymously: Failed - $task")
                 }
             }
     }
@@ -179,11 +187,11 @@ class MainActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCredential:success")
+                        d(TAG, "signInWithCredential:success")
                         gotoProfilePage()
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.exception)
+                        d(TAG, "signInWithCredential:failure", task.exception)
                     }
                 }
     }
@@ -199,34 +207,34 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<LoginButton>(R.id.btn_facebookSignIn).registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
-                Log.d(TAG, "facebook:onSuccess:$loginResult")
+                d(TAG, "facebook:onSuccess:$loginResult")
                 handleFacebookAccessToken(loginResult.accessToken)
             }
 
             override fun onCancel() {
-                Log.d(TAG, "facebook:onCancel")
+                d(TAG, "facebook:onCancel")
             }
 
             override fun onError(error: FacebookException) {
-                Log.d(TAG, "facebook:onError", error)
+                d(TAG, "facebook:onError", error)
             }
         })
     }
 
 
     private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d(TAG, "handleFacebookAccessToken:$token")
+        d(TAG, "handleFacebookAccessToken:$token")
 
         val credential = FacebookAuthProvider.getCredential(token.token)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
+                    d(TAG, "signInWithCredential:success")
                     gotoProfilePage()
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    w(TAG, "signInWithCredential:failure", task.exception)
                 }
             }
     }
@@ -240,10 +248,10 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener { task->
                 if (task.isSuccessful) {
                     // Password reset sent
-                    Log.d(TAG, "Email reset: sent")
+                    d(TAG, "Email reset: sent")
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.d(TAG, "Email reset: failure", task.exception)
+                    d(TAG, "Email reset: failure", task.exception)
                 }
             }
     }

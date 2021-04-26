@@ -2,12 +2,10 @@ package com.unidevteam.cookingapp
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,10 +21,11 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
         if (user != null) {
+
             findViewById<TextView>(R.id.lb_profileId).text = "Profile ID: ${user.uid}"
             findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user.displayName}"
             findViewById<TextView>(R.id.lb_email).text = "Email: ${user.email}"
-            findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user.isEmailVerified.toString()}"
+            findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user.isEmailVerified}"
             if (user.photoUrl == null) {
                 findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
             } else {
@@ -48,14 +47,14 @@ class ProfileActivity : AppCompatActivity() {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Choose source: ")
-                    .setPositiveButton("Camera",
-                            DialogInterface.OnClickListener { _, _ ->
-                                cameraShot()
-                            })
-                    .setNegativeButton("File",
-                            DialogInterface.OnClickListener { _, _ ->
-                                fileChooser()
-                            })
+                    .setPositiveButton("Camera"
+                    ) { _, _ ->
+                        cameraShot()
+                    }
+                    .setNegativeButton("File"
+                    ) { _, _ ->
+                        fileChooser()
+                    }
             // AlertDialog Builder class
            val dialog: AlertDialog.Builder = builder
             dialog.show()
@@ -73,7 +72,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            Log.d(TAG, "Info: ${imageBitmap.toString()}")
+            Log.d(TAG, "Info: $imageBitmap")
             // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
         }
     }
@@ -103,7 +102,7 @@ class ProfileActivity : AppCompatActivity() {
     // [END file_chooser]
     private fun cameraShot() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+        intent.putExtra("android.intent.extras.CAMERA_FACING", 1)
 
         try {
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
