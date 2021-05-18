@@ -12,5 +12,13 @@
     // Facebook Login
     <string name="facebook_app_id">285084103195286</string>
     <string name="fb_login_protocol_scheme">fb285084103195286</string>
+    <string name="image_profile_picture">Image profile picture</string>
+    <string name="profile_id">Profile Id:</string>
+    <string name="display_name">Display Name:</string>
+    <string name="email">Email:</string>
+    <string name="is_verified">Is Verified:</string>
+    <string name="logout">logout</string>
+    <string name="disable_user">Disable User</string>
+    <string name="delete_user">Delete User</string>
 
 </resources>
