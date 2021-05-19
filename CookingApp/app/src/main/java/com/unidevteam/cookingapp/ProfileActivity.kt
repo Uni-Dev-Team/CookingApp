@@ -1,11 +1,13 @@
 package com.unidevteam.cookingapp
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
@@ -13,12 +15,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.squareup.picasso.Picasso
+import java.net.URL
+import java.util.concurrent.Executors
 
 
 class ProfileActivity : AppCompatActivity() {
     private val user: FirebaseUser = FirebaseAuth.getInstance().currentUser
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -30,7 +32,15 @@ class ProfileActivity : AppCompatActivity() {
         if (user.photoUrl == null) {
             findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
         } else {
-                Picasso.get().load(user.photoUrl).into(findViewById<ImageView>(R.id.img_profile))
+            val executor = Executors.newSingleThreadExecutor()
+            val handler = Handler(Looper.getMainLooper())
+            executor.execute {
+                val url = URL(user.photoUrl.toString())
+                val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                handler.post {
+                    findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
+                    }
+                }
             }
 
         findViewById<TextView>(R.id.btn_logout).setOnClickListener {

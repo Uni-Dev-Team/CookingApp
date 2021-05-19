@@ -72,7 +72,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
     // Declare the dependency for the Facebook Login service
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
-    // Declare the dependency for the downloading image from internet
-    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }
