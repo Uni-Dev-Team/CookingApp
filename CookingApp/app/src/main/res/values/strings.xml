@@ -31,5 +31,7 @@
     <string name="inserisci_il_tuo_nome_e_cognome">Inserisci il tuo nome e cognome</string>
     <string name="avanti">Avanti</string>
     <string name="hai_gi_un_account_accedi">Hai già un account? Accedi</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -117,6 +117,6 @@ class RegisterActivity : AppCompatActivity() {
     // [END send_verification_email]
 
     companion object {
-        private const val TAG = "RegisterActivity"
+        const val TAG = "RegisterActivity"
     }
 }
