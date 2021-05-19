@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Cooking App</string>
-    <string name="login_title">Login</string>
-    <string name="login_button">Sign in</string>
+    <string name="login_title" translatable="false">Accesso</string>
+    <string name="login_button">Accedi</string>
     <string name="register_button">Sign Up</string>
-    <string name="guest_text">Or login as a guest</string>
-    <string name="register_link">Don\'t have an account yet? Sign up.</string>
+    <string name="guest_text">Prosegui come ospite</string>
+    <string name="register_link">Non hai un account? Registrati</string>
     <string name="login_link">Do you have already an account? Sign in.</string>
     <string name="register_title">Registration</string>
 
@@ -20,5 +20,11 @@
     <string name="logout">logout</string>
     <string name="disable_user">Disable User</string>
     <string name="delete_user">Delete User</string>
+    <string name="email_hint">Inserisci la tua email</string>
+    <string name="email_label">Email</string>
+    <string name="password_hint">Inserisci la tua password</string>
+    <string name="password_label">Password</string>
+    <string name="recover_password">Recupera la tua password</string>
+    <string name="logo_description">Logo di Cooking App</string>
 
 </resources>

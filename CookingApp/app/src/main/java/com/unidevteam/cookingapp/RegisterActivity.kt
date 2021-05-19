@@ -24,11 +24,11 @@ class RegisterActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btn_register).setOnClickListener {
             if (auth.currentUser == null) {
-                if (findViewById<TextView>(R.id.tf_email).text.isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.isNotEmpty() && findViewById<TextView>(R.id.tf_passwordAgain).text.isNotEmpty()) {
-                    if (emailValidator(findViewById<TextView>(R.id.tf_email).text.toString())) {
+                if (findViewById<TextView>(R.id.lb_email).text.isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.isNotEmpty() && findViewById<TextView>(R.id.tf_passwordAgain).text.isNotEmpty()) {
+                    if (emailValidator(findViewById<TextView>(R.id.lb_email).text.toString())) {
                         if (findViewById<TextView>(R.id.tf_password).text.toString() == findViewById<TextView>(R.id.tf_passwordAgain).text.toString()) {
                             if (passValidator(findViewById<TextView>(R.id.tf_password).text.toString())) {
-                                firebaseCreateUser(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
+                                firebaseCreateUser(findViewById<TextView>(R.id.lb_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
                             } else {
                                 Log.d(TAG, "Error: Password Regex mismatch")
                             }
