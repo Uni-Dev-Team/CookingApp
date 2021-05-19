@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
         // Buttons Listener
 
-        findViewById<TextView>(R.id.lb_registerPage).setOnClickListener {
+        findViewById<TextView>(R.id.lb_loginPage).setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }

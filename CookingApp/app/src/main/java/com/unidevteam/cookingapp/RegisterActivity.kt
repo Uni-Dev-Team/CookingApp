@@ -11,6 +11,9 @@ import com.google.firebase.auth.FirebaseUser
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+//TODO change layout in order to space evenly between UI components
+
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class RegisterActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
@@ -22,32 +25,36 @@ class RegisterActivity : AppCompatActivity() {
            gotoLoginPage()
         }
 
-        findViewById<Button>(R.id.btn_register).setOnClickListener {
+        findViewById<Button>(R.id.btn_next).setOnClickListener {
             if (auth.currentUser == null) {
-                if (findViewById<TextView>(R.id.lb_email).text.isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.isNotEmpty() && findViewById<TextView>(R.id.tf_passwordAgain).text.isNotEmpty()) {
-                    if (emailValidator(findViewById<TextView>(R.id.lb_email).text.toString())) {
-                        if (findViewById<TextView>(R.id.tf_password).text.toString() == findViewById<TextView>(R.id.tf_passwordAgain).text.toString()) {
-                            if (passValidator(findViewById<TextView>(R.id.tf_password).text.toString())) {
-                                firebaseCreateUser(findViewById<TextView>(R.id.lb_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
-                            } else {
-                                Log.d(TAG, "Error: Password Regex mismatch")
-                            }
+                if (findViewById<TextView>(R.id.tf_email).text.isNotEmpty() && findViewById<TextView>(
+                        R.id.tf_name
+                    ).text.isNotEmpty()
+                ) {
+                    // TODO is it better to merge these two if statements for better error handling?
+                    if (emailValidator(findViewById<TextView>(R.id.tf_email).text.toString())) {
+                        if (nameValidator(findViewById<TextView>(R.id.tf_name).text.toString())) {
+                            // Go next activity
+                            // val intent = Intent(this, activityName::class.java)
+
+                            Log.d(TAG, "Registered Successfully")
+
+
                         } else {
-                            Log.d(TAG, "Error: Password mismatch")
+                            Log.d(TAG, "Error: Name Regex mismatch")
                         }
                     } else {
-                        Log.d(TAG, "Error: Email Regex mismatch")
-                    }
+                            Log.d(TAG, "Error: Email Regex mismatch")
+                        }
                 } else {
                     Log.d(TAG, "Error: Field empty")
                 }
-
-            } else {
-                Log.d(TAG, "Error: User already logged")
+            } else { Log.d(TAG, "Error: User already logged")
                 gotoLoginPage()
             }
         }
     }
+
     // [START goto_login_page]
     private fun gotoLoginPage(){
         val intent = Intent(this@RegisterActivity, MainActivity::class.java)
@@ -56,6 +63,7 @@ class RegisterActivity : AppCompatActivity() {
     // [END goto_login_page]
 
     // [START password_regex]
+    // TODO: pass validation is never used, bring this to register pt 2
     private fun passValidator(text: String?):Boolean{
         val pattern: Pattern = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$ %^&*-]).{8,}\$")
         val matcher: Matcher = pattern.matcher(text)
@@ -71,7 +79,16 @@ class RegisterActivity : AppCompatActivity() {
     }
     // [END email_regex]
 
+    //[START] name_regex
+    private fun nameValidator(text: String?): Boolean {
+        val pattern: Pattern = Pattern.compile("^([a-zA-Z]{2,}\\s[a-zA-Z]{1,}'?-?[a-zA-Z]{1,}\\s?([a-zA-Z]{1,})?)")
+        val matcher: Matcher = pattern.matcher(text)
+        return matcher.matches()
+    }
+    //[END] name_regex
+
     // [START create_user]
+    // TODO bring this to registration pt 2 because it's never used
     private fun firebaseCreateUser(email: String, password: String) {
         auth.createUserWithEmailAndPassword( email, password)
                 .addOnCompleteListener { task ->

@@ -1,5 +1,6 @@
 package com.unidevteam.cookingapp
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -17,23 +18,20 @@ import com.squareup.picasso.Picasso
 
 class ProfileActivity : AppCompatActivity() {
     private val user: FirebaseUser = FirebaseAuth.getInstance().currentUser
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-        if (user != null) {
 
-            findViewById<TextView>(R.id.lb_profileId).text = "Profile ID: ${user.uid}"
-            findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user.displayName}"
-            findViewById<TextView>(R.id.lb_email).text = "Email: ${user.email}"
-            findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user.isEmailVerified}"
-            if (user.photoUrl == null) {
-                findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
-            } else {
-                    Picasso.get().load(user.photoUrl).into(findViewById<ImageView>(R.id.img_profile))
-                }
+        findViewById<TextView>(R.id.lb_profileId).text = "Profile ID: ${user.uid}"
+        findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user.displayName}"
+        findViewById<TextView>(R.id.lb_email).text = "Email: ${user.email}"
+        findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user.isEmailVerified}"
+        if (user.photoUrl == null) {
+            findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
         } else {
-            gotoLoginPage()
-        }
+                Picasso.get().load(user.photoUrl).into(findViewById<ImageView>(R.id.img_profile))
+            }
 
         findViewById<TextView>(R.id.btn_logout).setOnClickListener {
             Log.d(TAG, "Button Logout pressed")

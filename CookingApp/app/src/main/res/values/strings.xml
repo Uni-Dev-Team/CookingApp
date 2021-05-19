@@ -26,5 +26,10 @@
     <string name="password_label">Password</string>
     <string name="recover_password">Recupera la tua password</string>
     <string name="logo_description">Logo di Cooking App</string>
+    <string name="registrazione">Registrazione</string>
+    <string name="nome_completo">Nome completo</string>
+    <string name="inserisci_il_tuo_nome_e_cognome">Inserisci il tuo nome e cognome</string>
+    <string name="avanti">Avanti</string>
+    <string name="hai_gi_un_account_accedi">Hai già un account? Accedi</string>
 
 </resources>

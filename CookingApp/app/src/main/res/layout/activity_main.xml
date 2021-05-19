@@ -161,13 +161,13 @@
         android:textAllCaps="false"
         android:textSize="18sp"
         app:cornerRadius="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/lb_registerPage"
+        app:layout_constraintBottom_toTopOf="@+id/lb_loginPage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <TextView
-        android:id="@+id/lb_registerPage"
+        android:id="@+id/lb_loginPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16sp"
@@ -192,6 +192,6 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_facebookSignIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lb_registerPage" />
+        app:layout_constraintTop_toBottomOf="@+id/lb_loginPage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
