@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -18,12 +19,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-private const val NUM_PAGES = 2
-
-@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS",
-    "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS"
-)
-class RegisterActivityWithFragments : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
     private lateinit var viewPager: ViewPager2
@@ -34,7 +30,7 @@ class RegisterActivityWithFragments : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register_with_fragments)
+        setContentView(R.layout.activity_register)
 
         auth = FirebaseAuth.getInstance()
 
@@ -47,22 +43,26 @@ class RegisterActivityWithFragments : AppCompatActivity() {
             if(viewPager.currentItem == 0) {
                 val name = findViewById<TextView>(R.id.tf_name).text.toString()
                 val email = findViewById<TextView>(R.id.tf_email).text.toString()
-                // Da aggiungere:
-                // - Log grafico per errori e avvisi all'utente
-                if(name.isNotEmpty() && email.isNotEmpty() && nameValidator(name) && emailValidator(email)) {
-                    Log.d(TAG, "Nome: $name")
-                    Log.d(TAG, "Email: $email")
-                    viewPager.setCurrentItem(1)
-                    _name = name
-                    _email = email
-                    findViewById<Button>(R.id.btn_next).setText(R.string.signup_button)
+                if(name.isNotEmpty() && email.isNotEmpty()) {
+                    if (nameValidator(name) && emailValidator(email)) {
+                        Log.d(TAG, "Nome: $name")
+                        Log.d(TAG, "Email: $email")
+                        viewPager.currentItem = 1
+                        _name = name
+                        _email = email
+                        findViewById<Button>(R.id.btn_next).setText(R.string.signup_button)
+                    } else {
+                        Toast.makeText(this, "Name/email syntax not correct", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }else {
+                    Toast.makeText(this, "Name/email not filled", Toast.LENGTH_SHORT)
+                        .show()
                 }
             } else if(viewPager.currentItem == 1) {
                 val password1 = findViewById<TextView>(R.id.tf_password_1).text.toString()
                 val password2 = findViewById<TextView>(R.id.tf_password_2).text.toString()
-                // Da aggiungere:
-                // - Log grafico per errori e avvisi all'utente
-                if(password1.isNotEmpty() && password2.isNotEmpty() && password1.equals(password2) && passValidator(password1)) {
+                if(password1.isNotEmpty() && password2.isNotEmpty() && password1 == password2 && passValidator(password1)) {
                     Log.d(TAG, "Password 1: $password1")
                     Log.d(TAG, "Password 2: $password2")
                     _password = password1
@@ -79,9 +79,9 @@ class RegisterActivityWithFragments : AppCompatActivity() {
                                     auth.currentUser!!.updateProfile(profileUpdates)
                                         .addOnCompleteListener { task2 ->
                                             if(task2.isSuccessful) {
-                                                Log.d(TAG, "Set display name riuscito")
+                                                Log.d(TAG, "Log: Display-name set successively set")
                                             } else {
-                                                Log.d(TAG, "Set display name fallito")
+                                                Log.d(TAG, "Error: Display-name set successively failed")
                                             }
                                         }
 
@@ -89,11 +89,14 @@ class RegisterActivityWithFragments : AppCompatActivity() {
                                     gotoLoginPage()
                                 } else {
                                     Log.d(TAG, "Registration: Failed - ${task.exception}")
+                                    Toast.makeText(this, "User already taken", Toast.LENGTH_SHORT).show()
                                 }
                             }
                     } else { Log.d(TAG, "Error: User already logged")
                         gotoLoginPage()
                     }
+                } else {
+                    Toast.makeText(this, "Password mismatch", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -125,7 +128,6 @@ class RegisterActivityWithFragments : AppCompatActivity() {
     // [END goto_login_page]
 
     // [START password_regex]
-    // TODO: pass validation is never used, bring this to register pt 2
     private fun passValidator(text: String?):Boolean{
         val pattern: Pattern = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$ %^&*-]).{8,}\$")
         val matcher: Matcher = pattern.matcher(text)
@@ -141,16 +143,15 @@ class RegisterActivityWithFragments : AppCompatActivity() {
     }
     // [END email_regex]
 
-    //[START] name_regex
+    //[START name_regex]
     private fun nameValidator(text: String?): Boolean {
         val pattern: Pattern = Pattern.compile("^([a-zA-Z]{2,}\\s[a-zA-Z]{1,}'?-?[a-zA-Z]{1,}\\s?([a-zA-Z]{1,})?)")
         val matcher: Matcher = pattern.matcher(text)
         return matcher.matches()
     }
-    //[END] name_regex
+    //[END name_regex]
 
     // [START create_user]
-    // TODO bring this to registration pt 2 because it's never used
     private fun firebaseCreateUser(email: String, password: String) : Task<AuthResult> {
         return auth.createUserWithEmailAndPassword( email, password)
     }
@@ -170,5 +171,6 @@ class RegisterActivityWithFragments : AppCompatActivity() {
 
     companion object {
         private const val TAG = "RegisterActivity"
+        private const val NUM_PAGES = 2
     }
 }

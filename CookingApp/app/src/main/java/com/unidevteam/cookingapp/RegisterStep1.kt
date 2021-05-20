@@ -39,19 +39,6 @@ class RegisterStep1 : Fragment(){
     ): View? {
         // Inflate the layout for this fragment
         viewOfLayout = inflater!!.inflate(R.layout.fragment_register_step1, container, false)
-        /*viewOfLayout.findViewById<Button>(R.id.btn_next).setOnClickListener {
-            val name = viewOfLayout.findViewById<TextView>(R.id.tf_name).text.toString()
-            val email = viewOfLayout.findViewById<TextView>(R.id.tf_email).text.toString()
-            if (name.isNotEmpty() && email.isNotEmpty()){
-                Log.d(TAG, "Text filled")
-            } else {
-                Log.d(TAG, "Text not filled")
-            }
-        }
-        viewOfLayout.findViewById<TextView>(R.id.lb_loginPage).setOnClickListener {
-            val intent = Intent(activity, MainActivity::class.java)
-            startActivity(intent)
-        }*/
         return viewOfLayout
     }
 
