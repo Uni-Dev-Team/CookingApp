@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     // [START auth_status]
     private fun firebaseCheckUserStatus(): Boolean {
         return if (auth.currentUser != null) {
-            d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser.email}")
+            d(TAG, "Sign-in status: Logged \n Info ${auth.currentUser!!.email}")
             true
         } else {
             d(TAG, "Sign-in status: Not logged")
@@ -258,7 +258,7 @@ class MainActivity : AppCompatActivity() {
 
 
     companion object {
-        private const val TAG = "MainActivity"
+        private const val TAG = "LoginActivity"
         private const val RC_SIGN_IN = 9001
     }
 }

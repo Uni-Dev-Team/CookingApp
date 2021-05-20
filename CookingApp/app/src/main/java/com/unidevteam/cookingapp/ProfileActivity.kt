@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,33 +16,38 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.net.URL
 import java.util.concurrent.Executors
 
 
 class ProfileActivity : AppCompatActivity() {
-    private val user: FirebaseUser = FirebaseAuth.getInstance().currentUser
+    private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+    private val storage = Firebase.storage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        findViewById<TextView>(R.id.lb_profileId).text = "Profile ID: ${user.uid}"
-        findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user.displayName}"
-        findViewById<TextView>(R.id.lb_email).text = "Email: ${user.email}"
-        findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user.isEmailVerified}"
-        if (user.photoUrl == null) {
-            findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
-        } else {
-            val executor = Executors.newSingleThreadExecutor()
-            val handler = Handler(Looper.getMainLooper())
-            executor.execute {
-                val url = URL(user.photoUrl.toString())
-                val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                handler.post {
-                    findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
+        findViewById<TextView>(R.id.lb_profileId).text = "Profile ID: ${user?.uid}"
+        findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user?.displayName}"
+        findViewById<TextView>(R.id.lb_email).text = "Email: ${user?.email}"
+        findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user?.isEmailVerified}"
+        if (user != null) {
+            if (user.photoUrl == null) {
+                findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
+            } else {
+                val executor = Executors.newSingleThreadExecutor()
+                val handler = Handler(Looper.getMainLooper())
+                executor.execute {
+                    val url = URL(user?.photoUrl.toString())
+                    val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                    handler.post {
+                        findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
                     }
                 }
             }
+        }
 
         findViewById<TextView>(R.id.btn_logout).setOnClickListener {
             Log.d(TAG, "Button Logout pressed")
@@ -75,8 +81,15 @@ class ProfileActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_IMAGE_PATH && resultCode == RESULT_OK) {
             val selectedFile = data?.data //The uri with the location of the file
-            Log.d(TAG, "Path: $selectedFile")
-            // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
+            if (selectedFile != null) {
+                Log.d(TAG, "Path: $selectedFile")
+                // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
+                uploadProfileImage(selectedFile)
+            } else {
+                Log.d(TAG, "Error")
+            }
+
+
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
@@ -86,10 +99,30 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     // Functions
+
+    // [START upload_Image_to_Firestore]
+    private fun uploadProfileImage(uri: Uri) {
+        // TODO: 5/20/2021 To setup not able to upload files
+        var storageRef = storage.reference
+        storageRef.child("profilePicture.jpg")
+        val uploadTask = storageRef.putFile(uri)
+
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+            Log.d(TAG, "Error: ${uploadTask.exception}")
+        }.addOnSuccessListener { taskSnapshot ->
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+            // ...
+            Log.d(TAG, "Success: ${taskSnapshot.metadata}")
+        }
+    }
+    // [END upload_Image_to_Firestore]
     // [START auth_sign_out]
     private fun firebaseAuthSignOut() {
         val auth: FirebaseAuth = FirebaseAuth.getInstance()
-        if (auth.currentUser.isAnonymous) { auth.currentUser.delete() }
+        if (auth.currentUser?.isAnonymous == true) {
+            auth.currentUser?.delete()
+        }
         auth.signOut()
         if (auth.currentUser == null) {
             Log.d(TAG, "User signed oud")

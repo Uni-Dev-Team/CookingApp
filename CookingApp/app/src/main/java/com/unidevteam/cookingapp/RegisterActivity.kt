@@ -72,7 +72,11 @@ class RegisterActivity : AppCompatActivity() {
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Log.d(TAG, "Registration: User created correctly")
-                                    firebaseSendPasswordVerification(auth.currentUser)
+                                    auth.currentUser?.let { it1 ->
+                                        firebaseSendPasswordVerification(
+                                            it1
+                                        )
+                                    }
 
                                     val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).build()
 
