@@ -14,11 +14,15 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 private const val NUM_PAGES = 2
 
+@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS",
+    "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS"
+)
 class RegisterActivityWithFragments : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
@@ -69,6 +73,18 @@ class RegisterActivityWithFragments : AppCompatActivity() {
                                 if (task.isSuccessful) {
                                     Log.d(TAG, "Registration: User created correctly")
                                     firebaseSendPasswordVerification(auth.currentUser)
+
+                                    val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).build()
+
+                                    auth.currentUser!!.updateProfile(profileUpdates)
+                                        .addOnCompleteListener { task2 ->
+                                            if(task2.isSuccessful) {
+                                                Log.d(TAG, "Set display name riuscito")
+                                            } else {
+                                                Log.d(TAG, "Set display name fallito")
+                                            }
+                                        }
+
                                     auth.signOut()
                                     gotoLoginPage()
                                 } else {
