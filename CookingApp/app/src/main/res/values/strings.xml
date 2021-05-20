@@ -33,5 +33,7 @@
     <string name="hai_gi_un_account_accedi">Hai già un account? Accedi</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="confirm_password_label">Conferma password</string>
+    <string name="signup_button">Registrati</string>
 
 </resources>

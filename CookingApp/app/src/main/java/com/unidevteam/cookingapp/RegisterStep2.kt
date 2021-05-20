@@ -11,14 +11,14 @@ import androidx.fragment.app.Fragment
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-private const val TAG = "RegisterFragment1"
+private const val TAG = "RegisterFragment2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [RegisterStep1.newInstance] factory method to
+ * Use the [RegisterStep2.newInstance] factory method to
  * create an instance of this fragment.
  */
-class RegisterStep1 : Fragment(){
+class RegisterStep2 : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -38,12 +38,14 @@ class RegisterStep1 : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        viewOfLayout = inflater!!.inflate(R.layout.fragment_register_step1, container, false)
+        viewOfLayout = inflater!!.inflate(R.layout.fragment_register_step2, container, false)
         /*viewOfLayout.findViewById<Button>(R.id.btn_next).setOnClickListener {
-            val name = viewOfLayout.findViewById<TextView>(R.id.tf_name).text.toString()
-            val email = viewOfLayout.findViewById<TextView>(R.id.tf_email).text.toString()
-            if (name.isNotEmpty() && email.isNotEmpty()){
+            val password1 = viewOfLayout.findViewById<TextView>(R.id.tf_password_1).text.toString()
+            val password2 = viewOfLayout.findViewById<TextView>(R.id.tf_password_2).text.toString()
+            if (password1.isNotEmpty() && password2.isNotEmpty()){
                 Log.d(TAG, "Text filled")
+                Log.d(TAG, "Password 1: $password1")
+                Log.d(TAG, "Password 2: $password2")
             } else {
                 Log.d(TAG, "Text not filled")
             }
@@ -62,12 +64,12 @@ class RegisterStep1 : Fragment(){
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment RegisterStep1.
+         * @return A new instance of fragment RegisterStep2.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            RegisterStep1().apply {
+            RegisterStep2().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

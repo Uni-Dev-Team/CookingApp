@@ -84,8 +84,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btn_login).setOnClickListener {
-            d(TAG, "Button Login pressed")
-            d(TAG, findViewById<TextView>(R.id.tf_email).text.toString())
             if (findViewById<TextView>(R.id.tf_email).text.toString().isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.toString().isNotEmpty()){
                 d(TAG, "Text filled")
                 firebaseAuthWithEmailAndPassword(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
