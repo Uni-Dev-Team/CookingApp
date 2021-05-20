@@ -13,11 +13,11 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/lb_loginPage"
         app:layout_constraintEnd_toStartOf="@+id/btn_facebookSignIn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lb_guest" />
+        app:layout_constraintTop_toBottomOf="@id/btn_login" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/btn_facebookSignIn"
@@ -25,18 +25,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:paddingStart="5dp"
         android:paddingLeft="8dp"
         android:paddingTop="12dp"
         android:paddingEnd="5dp"
         android:paddingRight="8dp"
         android:paddingBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/lb_loginPage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/btn_googleSignIn"
-        app:layout_constraintTop_toBottomOf="@+id/lb_guest" />
+        app:layout_constraintTop_toBottomOf="@id/btn_login" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -161,7 +161,7 @@
         android:textAllCaps="false"
         android:textSize="18sp"
         app:cornerRadius="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/lb_loginPage"
+        app:layout_constraintBottom_toTopOf="@+id/btn_facebookSignIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -170,7 +170,6 @@
         android:id="@+id/lb_loginPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16sp"
         android:text="@string/register_link"
         android:textAlignment="center"
         android:textColor="@color/browser_actions_text_color"
@@ -178,18 +177,19 @@
         app:layout_constraintBottom_toTopOf="@+id/lb_guest"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_facebookSignIn" />
 
     <TextView
         android:id="@+id/lb_guest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="64dp"
         android:text="@string/guest_text"
         android:textAlignment="center"
         android:textColor="@color/browser_actions_text_color"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_facebookSignIn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lb_loginPage" />
