@@ -40,15 +40,7 @@ class ProfileActivity : AppCompatActivity() {
             if (user.photoUrl == null) {
                 findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
             } else {
-                val executor = Executors.newSingleThreadExecutor()
-                val handler = Handler(Looper.getMainLooper())
-                executor.execute {
-                    val url = URL(user?.photoUrl.toString())
-                    val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                    handler.post {
-                        findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
-                    }
-                }
+                updateImageView()
             }
         }
 
@@ -118,7 +110,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     // Functions
-    fun getPathFromInputStreamUri(uri: Uri): String? {
+    private fun getPathFromInputStreamUri(uri: Uri): String? {
         var filePath: String? = null
         uri.authority?.let {
             try {
@@ -157,13 +149,13 @@ class ProfileActivity : AppCompatActivity() {
     private fun uploadProfileImage(imageData: Bitmap) {
         Log.d(TAG, "UPLOAD CHIAMATO")
         // TODO: 5/20/2021 To setup not able to upload files
-        var storageRef = storage.reference
+        val storageRef = storage.reference
 
-        val baos = ByteArrayOutputStream()
-        imageData.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
+        val bas = ByteArrayOutputStream()
+        imageData.compress(Bitmap.CompressFormat.JPEG, 100, bas)
+        val data = bas.toByteArray()
 
-        var uploadTask = storageRef.child("profilePics/${user!!.uid}").putBytes(data)
+        val uploadTask = storageRef.child("profilePics/${user!!.uid}").putBytes(data)
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
             Log.d(TAG, "Error: ${uploadTask.exception}")
@@ -171,16 +163,17 @@ class ProfileActivity : AppCompatActivity() {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             Log.d(TAG, "Success: ${taskSnapshot.metadata}")
-            var downloadURLTask = storageRef.child("profilePics/${user!!.uid}").downloadUrl
+            val downloadURLTask = storageRef.child("profilePics/${user.uid}").downloadUrl
             downloadURLTask.addOnSuccessListener { downloadURL ->
                 // Aggiorna il campo dell'URL della foto profilo
 
                 val profileUpdates = UserProfileChangeRequest.Builder().setPhotoUri(downloadURL).build()
 
-                user!!.updateProfile(profileUpdates)
+                user.updateProfile(profileUpdates)
                     .addOnCompleteListener { task ->
                         if(task.isSuccessful) {
                             Log.d(TAG, "Log: Photo URL set successively set")
+                            updateImageView()
                         } else {
                             Log.d(TAG, "Error: Photo URL set successively failed")
                         }
@@ -189,6 +182,19 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
     // [END upload_Image_to_Firestore]
+
+    // [START Update_ImageView]
+    private fun updateImageView() {
+        val executor = Executors.newSingleThreadExecutor()
+        val handler = Handler(Looper.getMainLooper())
+        executor.execute {
+            val url = URL(user?.photoUrl.toString())
+            val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+            handler.post {
+                findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
+            }
+        }
+    }
     // [START auth_sign_out]
     private fun firebaseAuthSignOut() {
         val auth: FirebaseAuth = FirebaseAuth.getInstance()
