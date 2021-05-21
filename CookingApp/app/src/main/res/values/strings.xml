@@ -35,5 +35,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="confirm_password_label">Conferma password</string>
     <string name="signup_button">Registrati</string>
+    <string name="lb_photo_url">Photo URL:</string>
 
 </resources>

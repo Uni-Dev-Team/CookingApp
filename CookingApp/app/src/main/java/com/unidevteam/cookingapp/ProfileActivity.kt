@@ -16,8 +16,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.io.*
 import java.net.URL
 import java.util.concurrent.Executors
 
@@ -33,6 +35,7 @@ class ProfileActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.lb_displayName).text = "Display Name: ${user?.displayName}"
         findViewById<TextView>(R.id.lb_email).text = "Email: ${user?.email}"
         findViewById<TextView>(R.id.lb_isVerified).text = "Is Verified: ${user?.isEmailVerified}"
+        findViewById<TextView>(R.id.lb_photoURL).text = "Photo URL: ${user?.photoUrl}"
         if (user != null) {
             if (user.photoUrl == null) {
                 findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
@@ -79,34 +82,88 @@ class ProfileActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        // Se seleziona l'ìmmagine dalla galleria
         if (requestCode == REQUEST_IMAGE_PATH && resultCode == RESULT_OK) {
             val selectedFile = data?.data //The uri with the location of the file
+            Log.d(TAG,"File selezionato: $selectedFile")
             if (selectedFile != null) {
                 Log.d(TAG, "Path: $selectedFile")
                 // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
-                uploadProfileImage(selectedFile)
+                // Log.d(TAG, "Projection: ${arrayOf(MediaStore.Images.Media.DATA)[0]}")
+                //val cursor: Cursor? = contentResolver.query(selectedFile, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
+                //cursor?.moveToFirst()
+                //val imagePath : String? = cursor?.getString(cursor?.getColumnIndex(arrayOf(MediaStore.Images.Media.DATA)[0]))
+
+                val imagePath : String? = getPathFromInputStreamUri(selectedFile)
+                Log.d(TAG, "IMAGE PATH: $imagePath")
+
+                val options : BitmapFactory.Options = BitmapFactory.Options()
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888
+                val bitmap : Bitmap = BitmapFactory.decodeFile(imagePath, options)
+
+                uploadProfileImage(bitmap)
+
+                //cursor?.close()
             } else {
-                Log.d(TAG, "Error")
+                Log.e(TAG, "Error: selected file was null")
             }
-
-
         }
+
+        // Se fa la foto in tempo reale
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            Log.d(TAG, "Info: $imageBitmap")
             // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
+            uploadProfileImage(imageBitmap)
         }
     }
 
     // Functions
+    fun getPathFromInputStreamUri(uri: Uri): String? {
+        var filePath: String? = null
+        uri.authority?.let {
+            try {
+                contentResolver.openInputStream(uri).use {
+                    val photoFile: File? = createTemporalFileFrom(it)
+                    filePath = photoFile?.path
+                }
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return filePath
+    }
+
+    @Throws(IOException::class)
+    private fun createTemporalFileFrom(inputStream: InputStream?): File? {
+        var targetFile: File? = null
+        return if (inputStream == null) targetFile
+        else {
+            var read: Int
+            val buffer = ByteArray(8 * 1024)
+            targetFile = File.createTempFile("tempPicture", "jpg")
+            FileOutputStream(targetFile).use { out ->
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    out.write(buffer, 0, read)
+                }
+                out.flush()
+            }
+            targetFile
+        }
+    }
 
     // [START upload_Image_to_Firestore]
-    private fun uploadProfileImage(uri: Uri) {
+    private fun uploadProfileImage(imageData: Bitmap) {
+        Log.d(TAG, "UPLOAD CHIAMATO")
         // TODO: 5/20/2021 To setup not able to upload files
         var storageRef = storage.reference
-        storageRef.child("profilePicture.jpg")
-        val uploadTask = storageRef.putFile(uri)
 
+        val baos = ByteArrayOutputStream()
+        imageData.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        var uploadTask = storageRef.child("profilePics/${user!!.uid}").putBytes(data)
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
             Log.d(TAG, "Error: ${uploadTask.exception}")
@@ -114,6 +171,21 @@ class ProfileActivity : AppCompatActivity() {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             Log.d(TAG, "Success: ${taskSnapshot.metadata}")
+            var downloadURLTask = storageRef.child("profilePics/${user!!.uid}").downloadUrl
+            downloadURLTask.addOnSuccessListener { downloadURL ->
+                // Aggiorna il campo dell'URL della foto profilo
+
+                val profileUpdates = UserProfileChangeRequest.Builder().setPhotoUri(downloadURL).build()
+
+                user!!.updateProfile(profileUpdates)
+                    .addOnCompleteListener { task ->
+                        if(task.isSuccessful) {
+                            Log.d(TAG, "Log: Photo URL set successively set")
+                        } else {
+                            Log.d(TAG, "Error: Photo URL set successively failed")
+                        }
+                    }
+            }
         }
     }
     // [END upload_Image_to_Firestore]
@@ -138,6 +210,7 @@ class ProfileActivity : AppCompatActivity() {
                 .setType("*/*")
                 .setAction(Intent.ACTION_GET_CONTENT)
 
+        Log.d(TAG,"FILE CHOOSER CHIAMATO")
         startActivityForResult(Intent.createChooser(intent, "Select a file"), REQUEST_IMAGE_PATH)
    }
     // [END file_chooser]
