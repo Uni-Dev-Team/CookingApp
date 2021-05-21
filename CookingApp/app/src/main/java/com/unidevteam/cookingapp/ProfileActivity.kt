@@ -58,7 +58,7 @@ class ProfileActivity : AppCompatActivity() {
             builder.setMessage("Choose source: ")
                     .setPositiveButton("Camera"
                     ) { _, _ ->
-                        cameraShot()
+                        dispatchTakePictureIntent()
                     }
                     .setNegativeButton("File"
                     ) { _, _ ->
@@ -74,18 +74,11 @@ class ProfileActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Se seleziona l'ìmmagine dalla galleria
         if (requestCode == REQUEST_IMAGE_PATH && resultCode == RESULT_OK) {
-            val selectedFile = data?.data //The uri with the location of the file
+            val selectedFile = data?.data
             Log.d(TAG,"File selezionato: $selectedFile")
             if (selectedFile != null) {
                 Log.d(TAG, "Path: $selectedFile")
-                // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
-                // Log.d(TAG, "Projection: ${arrayOf(MediaStore.Images.Media.DATA)[0]}")
-                //val cursor: Cursor? = contentResolver.query(selectedFile, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
-                //cursor?.moveToFirst()
-                //val imagePath : String? = cursor?.getString(cursor?.getColumnIndex(arrayOf(MediaStore.Images.Media.DATA)[0]))
-
                 val imagePath : String? = getPathFromInputStreamUri(selectedFile)
                 Log.d(TAG, "IMAGE PATH: $imagePath")
 
@@ -95,13 +88,11 @@ class ProfileActivity : AppCompatActivity() {
 
                 uploadProfileImage(bitmap)
 
-                //cursor?.close()
             } else {
                 Log.e(TAG, "Error: selected file was null")
             }
         }
 
-        // Se fa la foto in tempo reale
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
@@ -220,12 +211,12 @@ class ProfileActivity : AppCompatActivity() {
         startActivityForResult(Intent.createChooser(intent, "Select a file"), REQUEST_IMAGE_PATH)
    }
     // [END file_chooser]
-    private fun cameraShot() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.putExtra("android.intent.extras.CAMERA_FACING", 1)
 
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         } catch (e: ActivityNotFoundException) {
             // display error state to the user
         }
