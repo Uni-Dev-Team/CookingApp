@@ -51,7 +51,7 @@
         app:srcCompat="@mipmap/ic_color_logo_foreground" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/lb_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -65,14 +65,14 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/linearLayout_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/lb_login">
 
         <TextView
             android:id="@+id/lb_email"
@@ -101,17 +101,17 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout_email">
 
         <TextView
-            android:id="@+id/lb_passwordForgotten"
+            android:id="@+id/lb_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/password_label"
@@ -137,7 +137,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/lb_passwordForgotten"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -147,7 +147,7 @@
         android:textSize="16sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout_password" />
 
     <Button
         android:id="@+id/btn_login"
@@ -164,7 +164,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_facebookSignIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/lb_passwordForgotten" />
 
     <TextView
         android:id="@+id/lb_loginPage"

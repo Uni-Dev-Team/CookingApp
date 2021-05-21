@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log.*
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -22,6 +23,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.unidevteam.cookingapp.util.SyntaxManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -70,7 +72,17 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.lb_passwordForgotten).setOnClickListener {
             d(TAG, "Password reset pressed")
-            firebasePasswordReset(findViewById<TextView>(R.id.lb_email).text.toString())
+            if (findViewById<TextView>(R.id.tf_email).text.isNotEmpty()) {
+                // formatting check
+                if (SyntaxManager.emailValidator(findViewById<TextView>(R.id.tf_email).text.toString())) {
+                    firebasePasswordReset(findViewById<TextView>(R.id.tf_email).text.toString())
+                } else {
+                    Toast.makeText(this, "Email not formatted correctly", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(this, "Email field not filled", Toast.LENGTH_SHORT).show()
+            }
+
         }
 
         findViewById<SignInButton>(R.id.btn_googleSignIn).setOnClickListener {
@@ -248,6 +260,7 @@ class MainActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Password reset sent
                     d(TAG, "Email reset: sent")
+                    Toast.makeText(this, "Email reset sent", Toast.LENGTH_SHORT).show()
                 } else {
                     // If sign in fails, display a message to the user.
                     d(TAG, "Email reset: failure", task.exception)

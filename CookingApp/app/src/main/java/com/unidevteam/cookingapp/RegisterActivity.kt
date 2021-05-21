@@ -16,8 +16,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import com.unidevteam.cookingapp.util.SyntaxManager
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -44,7 +43,7 @@ class RegisterActivity : AppCompatActivity() {
                 val name = findViewById<TextView>(R.id.tf_name).text.toString()
                 val email = findViewById<TextView>(R.id.tf_email).text.toString()
                 if(name.isNotEmpty() && email.isNotEmpty()) {
-                    if (nameValidator(name) && emailValidator(email)) {
+                    if (SyntaxManager.nameValidator(name) && SyntaxManager.emailValidator(email)) {
                         Log.d(TAG, "Nome: $name")
                         Log.d(TAG, "Email: $email")
                         viewPager.currentItem = 1
@@ -62,7 +61,7 @@ class RegisterActivity : AppCompatActivity() {
             } else if(viewPager.currentItem == 1) {
                 val password1 = findViewById<TextView>(R.id.tf_password_1).text.toString()
                 val password2 = findViewById<TextView>(R.id.tf_password_2).text.toString()
-                if(password1.isNotEmpty() && password2.isNotEmpty() && password1 == password2 && passValidator(password1)) {
+                if(password1.isNotEmpty() && password2.isNotEmpty() && password1 == password2 && SyntaxManager.passValidator(password1)) {
                     Log.d(TAG, "Password 1: $password1")
                     Log.d(TAG, "Password 2: $password2")
                     _password = password1
@@ -131,29 +130,7 @@ class RegisterActivity : AppCompatActivity() {
     }
     // [END goto_login_page]
 
-    // [START password_regex]
-    private fun passValidator(text: String?):Boolean{
-        val pattern: Pattern = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$ %^&*-]).{8,}\$")
-        val matcher: Matcher = pattern.matcher(text)
-        return matcher.matches()
-    }
-    // [END password_regex]
 
-    // [START email_regex]
-    private fun emailValidator(text: String?):Boolean{
-        val pattern: Pattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)\$")
-        val matcher: Matcher = pattern.matcher(text)
-        return matcher.matches()
-    }
-    // [END email_regex]
-
-    //[START name_regex]
-    private fun nameValidator(text: String?): Boolean {
-        val pattern: Pattern = Pattern.compile("^([a-zA-Z]{2,}\\s[a-zA-Z]{1,}'?-?[a-zA-Z]{1,}\\s?([a-zA-Z]{1,})?)")
-        val matcher: Matcher = pattern.matcher(text)
-        return matcher.matches()
-    }
-    //[END name_regex]
 
     // [START create_user]
     private fun firebaseCreateUser(email: String, password: String) : Task<AuthResult> {
