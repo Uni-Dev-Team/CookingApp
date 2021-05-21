@@ -106,6 +106,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 d(TAG, "Text not filled")
+                Toast.makeText(this, "Empty fields", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -172,6 +173,7 @@ class MainActivity : AppCompatActivity() {
                     gotoProfilePage()
                 } else {
                     d(TAG, "SignIn with email and password: Failed - $task")
+                    Toast.makeText(this, "Wrong email or password", Toast.LENGTH_SHORT).show()
                 }
             }
     }
@@ -186,6 +188,7 @@ class MainActivity : AppCompatActivity() {
                     gotoProfilePage()
                 } else {
                     d(TAG, "SignIn anonymously: Failed - $task")
+                    Toast.makeText(this, "Guest sinning failed ", Toast.LENGTH_SHORT).show()
                 }
             }
     }
@@ -203,6 +206,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         // If sign in fails, display a message to the user.
                         d(TAG, "signInWithCredential:failure", task.exception)
+                        Toast.makeText(this, "Login with Google failed", Toast.LENGTH_SHORT).show()
                     }
                 }
     }
@@ -246,6 +250,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     // If sign in fails, display a message to the user.
                     w(TAG, "signInWithCredential:failure", task.exception)
+                    Toast.makeText(this, "Login with Facebook failed", Toast.LENGTH_SHORT).show()
                 }
             }
     }
