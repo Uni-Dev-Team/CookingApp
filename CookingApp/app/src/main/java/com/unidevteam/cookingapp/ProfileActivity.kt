@@ -1,5 +1,6 @@
 package com.unidevteam.cookingapp
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -28,6 +29,7 @@ import java.util.concurrent.Executors
 class ProfileActivity : AppCompatActivity() {
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val storage = Firebase.storage
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -44,7 +46,7 @@ class ProfileActivity : AppCompatActivity() {
                 val executor = Executors.newSingleThreadExecutor()
                 val handler = Handler(Looper.getMainLooper())
                 executor.execute {
-                    val url = URL(user?.photoUrl.toString())
+                    val url = URL(user.photoUrl.toString())
                     val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
                     handler.post {
                         findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
@@ -163,13 +165,13 @@ class ProfileActivity : AppCompatActivity() {
             bitmapImage = imageData
         }
 
-        var storageRef = storage.reference
+        val storageRef = storage.reference
 
         val baos = ByteArrayOutputStream()
         bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
-        var uploadTask = storageRef.child("profilePics/${user!!.uid}").putBytes(data)
+        val uploadTask = storageRef.child("profilePics/${user!!.uid}").putBytes(data)
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
             Log.d(TAG, "Error: ${uploadTask.exception}")
@@ -177,12 +179,12 @@ class ProfileActivity : AppCompatActivity() {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             Log.d(TAG, "Success: ${taskSnapshot.metadata}")
-            var downloadURLTask = storageRef.child("profilePics/${user!!.uid}").downloadUrl
+            val downloadURLTask = storageRef.child("profilePics/${user.uid}").downloadUrl
             downloadURLTask.addOnSuccessListener { downloadURL ->
                 // Aggiorna il campo dell'URL della foto profilo
                 val profileUpdates = UserProfileChangeRequest.Builder().setPhotoUri(downloadURL).build()
 
-                user!!.updateProfile(profileUpdates)
+                user.updateProfile(profileUpdates)
                     .addOnCompleteListener { task ->
                         if(task.isSuccessful) {
                             Log.d(TAG, "Log: Photo URL set successively set")
@@ -248,8 +250,9 @@ class ProfileActivity : AppCompatActivity() {
 
     // [START goto_login_page]
     private fun gotoLoginPage(){
-        val intent = Intent(this@ProfileActivity, MainActivity::class.java)
+        val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
         startActivity(intent)
+        finish()
     }
     // [END goto_login_page]
 

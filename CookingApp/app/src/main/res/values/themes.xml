@@ -13,9 +13,19 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnPrimary</item>
         <!-- Customize your theme here. -->
     </style>
+
     <style name="EditTextTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorControlNormal">@color/borderColor</item>
         <item name="colorControlActivated">@color/redOrange</item>
         <item name="colorControlHighlight">@color/redOrangeLight</item>
     </style>
+
+    <style name="Theme.CookingApp.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.CookingApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.CookingApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

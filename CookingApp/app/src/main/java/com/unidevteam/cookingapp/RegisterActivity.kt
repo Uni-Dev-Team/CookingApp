@@ -125,7 +125,7 @@ class RegisterActivity : AppCompatActivity() {
 
     // [START goto_login_page]
     private fun gotoLoginPage(){
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
     // [END goto_login_page]
