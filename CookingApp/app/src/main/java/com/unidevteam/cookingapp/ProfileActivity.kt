@@ -20,6 +20,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.*
+import java.lang.Integer.min
 import java.net.URL
 import java.util.concurrent.Executors
 
@@ -40,7 +41,15 @@ class ProfileActivity : AppCompatActivity() {
             if (user.photoUrl == null) {
                 findViewById<ImageView>(R.id.img_profile).setImageResource(R.drawable.ic_baseline_account_circle_80)
             } else {
-                updateImageView()
+                val executor = Executors.newSingleThreadExecutor()
+                val handler = Handler(Looper.getMainLooper())
+                executor.execute {
+                    val url = URL(user?.photoUrl.toString())
+                    val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                    handler.post {
+                        findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
+                    }
+                }
             }
         }
 
@@ -58,7 +67,7 @@ class ProfileActivity : AppCompatActivity() {
             builder.setMessage("Choose source: ")
                     .setPositiveButton("Camera"
                     ) { _, _ ->
-                        dispatchTakePictureIntent()
+                        cameraShot()
                     }
                     .setNegativeButton("File"
                     ) { _, _ ->
@@ -74,11 +83,13 @@ class ProfileActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        // Se seleziona l'ìmmagine dalla galleria
         if (requestCode == REQUEST_IMAGE_PATH && resultCode == RESULT_OK) {
-            val selectedFile = data?.data
+            val selectedFile = data?.data //The uri with the location of the file
             Log.d(TAG,"File selezionato: $selectedFile")
             if (selectedFile != null) {
                 Log.d(TAG, "Path: $selectedFile")
+                // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
                 val imagePath : String? = getPathFromInputStreamUri(selectedFile)
                 Log.d(TAG, "IMAGE PATH: $imagePath")
 
@@ -87,12 +98,12 @@ class ProfileActivity : AppCompatActivity() {
                 val bitmap : Bitmap = BitmapFactory.decodeFile(imagePath, options)
 
                 uploadProfileImage(bitmap)
-
             } else {
                 Log.e(TAG, "Error: selected file was null")
             }
         }
 
+        // Se fa la foto in tempo reale
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
@@ -138,15 +149,27 @@ class ProfileActivity : AppCompatActivity() {
 
     // [START upload_Image_to_Firestore]
     private fun uploadProfileImage(imageData: Bitmap) {
-        Log.d(TAG, "UPLOAD CHIAMATO")
-        // TODO: 5/20/2021 To setup not able to upload files
-        val storageRef = storage.reference
+        lateinit var bitmapImage : Bitmap
 
-        val bas = ByteArrayOutputStream()
-        imageData.compress(Bitmap.CompressFormat.JPEG, 100, bas)
-        val data = bas.toByteArray()
+        // Taglia l'immagine per ottenerne una quadrata
+        if(imageData.width != imageData.height) {
+            val shortestSide = min(imageData.width, imageData.height)
 
-        val uploadTask = storageRef.child("profilePics/${user!!.uid}").putBytes(data)
+            val xOffset = (imageData.width - shortestSide) / 2
+            val yOffset = (imageData.height - shortestSide) / 2
+
+            bitmapImage = Bitmap.createBitmap(imageData, xOffset, yOffset, shortestSide, shortestSide)
+        } else {
+            bitmapImage = imageData
+        }
+
+        var storageRef = storage.reference
+
+        val baos = ByteArrayOutputStream()
+        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        var uploadTask = storageRef.child("profilePics/${user!!.uid}").putBytes(data)
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
             Log.d(TAG, "Error: ${uploadTask.exception}")
@@ -154,13 +177,12 @@ class ProfileActivity : AppCompatActivity() {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             Log.d(TAG, "Success: ${taskSnapshot.metadata}")
-            val downloadURLTask = storageRef.child("profilePics/${user.uid}").downloadUrl
+            var downloadURLTask = storageRef.child("profilePics/${user!!.uid}").downloadUrl
             downloadURLTask.addOnSuccessListener { downloadURL ->
                 // Aggiorna il campo dell'URL della foto profilo
-
                 val profileUpdates = UserProfileChangeRequest.Builder().setPhotoUri(downloadURL).build()
 
-                user.updateProfile(profileUpdates)
+                user!!.updateProfile(profileUpdates)
                     .addOnCompleteListener { task ->
                         if(task.isSuccessful) {
                             Log.d(TAG, "Log: Photo URL set successively set")
@@ -174,18 +196,20 @@ class ProfileActivity : AppCompatActivity() {
     }
     // [END upload_Image_to_Firestore]
 
-    // [START Update_ImageView]
+    // [START update_Image_view]
     private fun updateImageView() {
         val executor = Executors.newSingleThreadExecutor()
         val handler = Handler(Looper.getMainLooper())
         executor.execute {
-            val url = URL(user?.photoUrl.toString())
+            val url = URL(user!!.photoUrl.toString())
             val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
             handler.post {
                 findViewById<ImageView>(R.id.img_profile).setImageBitmap(bmp)
             }
         }
     }
+    // [END update_Image_view]
+
     // [START auth_sign_out]
     private fun firebaseAuthSignOut() {
         val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -211,12 +235,12 @@ class ProfileActivity : AppCompatActivity() {
         startActivityForResult(Intent.createChooser(intent, "Select a file"), REQUEST_IMAGE_PATH)
    }
     // [END file_chooser]
+    private fun cameraShot() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra("android.intent.extras.CAMERA_FACING", 1)
 
-
-    private fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
         } catch (e: ActivityNotFoundException) {
             // display error state to the user
         }
