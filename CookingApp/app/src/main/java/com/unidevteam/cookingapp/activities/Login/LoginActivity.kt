@@ -1,12 +1,12 @@
 package com.unidevteam.cookingapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -97,9 +97,13 @@ class LoginActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btn_login).setOnClickListener {
-            if (findViewById<TextView>(R.id.tf_email).text.toString().isNotEmpty() && findViewById<TextView>(R.id.tf_password).text.toString().isNotEmpty()){
+            if (findViewById<TextView>(R.id.tf_email).text.toString().isNotEmpty() && findViewById<TextView>(
+                    R.id.tf_password
+                ).text.toString().isNotEmpty()){
                 Log.d(TAG, "Text filled")
-                firebaseAuthWithEmailAndPassword(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(R.id.tf_password).text.toString())
+                firebaseAuthWithEmailAndPassword(findViewById<TextView>(R.id.tf_email).text.toString(), findViewById<TextView>(
+                    R.id.tf_password
+                ).text.toString())
                 if (firebaseCheckUserStatus()) {
                     gotoProfilePage()
                 } else {

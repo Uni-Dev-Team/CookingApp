@@ -9,8 +9,7 @@
 
 
     <LinearLayout
-        android:id="@+id/LinearLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,22 +21,27 @@
             android:id="@id/logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:contentDescription="@string/logo_description"
             android:paddingTop="15sp"
             android:paddingBottom="15sp"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
             app:srcCompat="@mipmap/ic_white_logo_foreground" />
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/white"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:max="100"
             android:paddingLeft="100sp"
             android:paddingRight="100sp"
-            android:max="100"
-            android:progress="0"/>
+            android:progress="0" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
