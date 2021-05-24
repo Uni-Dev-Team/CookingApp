@@ -18,6 +18,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.unidevteam.cookingapp.activities.Signup.RegisterStep1
 import com.unidevteam.cookingapp.activities.Signup.RegisterStep2
+import com.unidevteam.cookingapp.models.CAUser
+import com.unidevteam.cookingapp.services.DBManager
 import com.unidevteam.cookingapp.util.SyntaxManager
 
 class RegisterActivity : AppCompatActivity() {
@@ -82,22 +84,40 @@ class RegisterActivity : AppCompatActivity() {
                                         )
                                     }
 
-                                    val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).build()
+                                    Log.d(TAG, "Email inserita: $_email")
+                                    Log.d(TAG, "Nome inserito: ${_name.split(' ')[0]}")
+                                    Log.d(TAG, "Cognome inserito: ${_name.split(' ')[1]}")
 
-                                    auth.currentUser!!.updateProfile(profileUpdates)
-                                        .addOnCompleteListener { task2 ->
-                                            if(task2.isSuccessful) {
-                                                Log.d(TAG, "Log: Display-name set successively set")
-                                            } else {
-                                                Log.d(
-                                                    TAG,
-                                                    "Error: Display-name set successively failed"
-                                                )
-                                            }
+                                    val caUser : CAUser = CAUser(
+                                        email = _email,
+                                        name = _name.split(' ')[0],
+                                        surname = _name.split(' ')[1],
+                                        bio = "Ciao! Sono un nuovo cuoco di CookingApp!"
+                                    )
+
+                                    DBManager.saveUserInfo(caUser)
+                                        .addOnCompleteListener {
+                                            Log.d(TAG, "Dati extra dell'utente salvati correttamente")
+
+                                            val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).build()
+
+                                            auth.currentUser!!.updateProfile(profileUpdates)
+                                                .addOnCompleteListener { task2 ->
+                                                    if(task2.isSuccessful) {
+                                                        Log.d(TAG, "Log: Display-name set successively set")
+                                                        auth.signOut()
+                                                        gotoLoginPage()
+                                                    } else {
+                                                        Log.d(
+                                                            TAG,
+                                                            "Error: Display-name set successively failed"
+                                                        )
+                                                    }
+                                                }
                                         }
-
-                                    auth.signOut()
-                                    gotoLoginPage()
+                                        .addOnFailureListener {
+                                            Log.d(TAG, "Errore nel salvataggio dei dati extra dell'utente")
+                                        }
                                 } else {
                                     Log.d(TAG, "Registration: Failed - ${task.exception}")
                                     Toast.makeText(this, "User already taken", Toast.LENGTH_SHORT).show()
