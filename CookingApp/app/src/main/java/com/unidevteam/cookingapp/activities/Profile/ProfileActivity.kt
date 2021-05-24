@@ -21,10 +21,8 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.*
-import java.lang.Integer.min
 import java.net.URL
 import java.util.concurrent.Executors
-
 
 class ProfileActivity : AppCompatActivity() {
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
@@ -88,7 +86,7 @@ class ProfileActivity : AppCompatActivity() {
         // Se seleziona l'ìmmagine dalla galleria
         if (requestCode == REQUEST_IMAGE_PATH && resultCode == RESULT_OK) {
             val selectedFile = data?.data //The uri with the location of the file
-            Log.d(TAG,"File selezionato: $selectedFile")
+            Log.d(TAG, "File selezionato: $selectedFile")
             if (selectedFile != null) {
                 Log.d(TAG, "Path: $selectedFile")
                 // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
@@ -155,12 +153,13 @@ class ProfileActivity : AppCompatActivity() {
 
         // Taglia l'immagine per ottenerne una quadrata
         if(imageData.width != imageData.height) {
-            val shortestSide = min(imageData.width, imageData.height)
+            val shortestSide = Integer.min(imageData.width, imageData.height)
 
             val xOffset = (imageData.width - shortestSide) / 2
             val yOffset = (imageData.height - shortestSide) / 2
 
-            bitmapImage = Bitmap.createBitmap(imageData, xOffset, yOffset, shortestSide, shortestSide)
+            bitmapImage =
+                Bitmap.createBitmap(imageData, xOffset, yOffset, shortestSide, shortestSide)
         } else {
             bitmapImage = imageData
         }
@@ -233,7 +232,7 @@ class ProfileActivity : AppCompatActivity() {
                 .setType("*/*")
                 .setAction(Intent.ACTION_GET_CONTENT)
 
-        Log.d(TAG,"FILE CHOOSER CHIAMATO")
+        Log.d(TAG, "FILE CHOOSER CHIAMATO")
         startActivityForResult(Intent.createChooser(intent, "Select a file"), REQUEST_IMAGE_PATH)
    }
     // [END file_chooser]

@@ -16,6 +16,8 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.unidevteam.cookingapp.activities.Signup.RegisterStep1
+import com.unidevteam.cookingapp.activities.Signup.RegisterStep2
 import com.unidevteam.cookingapp.util.SyntaxManager
 
 class RegisterActivity : AppCompatActivity() {
@@ -61,7 +63,10 @@ class RegisterActivity : AppCompatActivity() {
             } else if(viewPager.currentItem == 1) {
                 val password1 = findViewById<TextView>(R.id.tf_password_1).text.toString()
                 val password2 = findViewById<TextView>(R.id.tf_password_2).text.toString()
-                if(password1.isNotEmpty() && password2.isNotEmpty() && password1 == password2 && SyntaxManager.passValidator(password1)) {
+                if(password1.isNotEmpty() && password2.isNotEmpty() && password1 == password2 && SyntaxManager.passValidator(
+                        password1
+                    )
+                ) {
                     Log.d(TAG, "Password 1: $password1")
                     Log.d(TAG, "Password 2: $password2")
                     _password = password1
@@ -84,7 +89,10 @@ class RegisterActivity : AppCompatActivity() {
                                             if(task2.isSuccessful) {
                                                 Log.d(TAG, "Log: Display-name set successively set")
                                             } else {
-                                                Log.d(TAG, "Error: Display-name set successively failed")
+                                                Log.d(
+                                                    TAG,
+                                                    "Error: Display-name set successively failed"
+                                                )
                                             }
                                         }
 
@@ -95,7 +103,8 @@ class RegisterActivity : AppCompatActivity() {
                                     Toast.makeText(this, "User already taken", Toast.LENGTH_SHORT).show()
                                 }
                             }
-                    } else { Log.d(TAG, "Error: User already logged")
+                    } else {
+                        Log.d(TAG, "Error: User already logged")
                         gotoLoginPage()
                     }
                 } else {
