@@ -238,7 +238,6 @@ class ProfileActivity : AppCompatActivity() {
     // [END file_chooser]
     private fun cameraShot() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        // intent.putExtra("android.intent.extras.CAMERA_FACING", 1)
 
         try {
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)

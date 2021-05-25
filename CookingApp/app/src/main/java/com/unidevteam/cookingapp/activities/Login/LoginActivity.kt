@@ -23,6 +23,8 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.unidevteam.cookingapp.models.CAUser
+import com.unidevteam.cookingapp.services.DBManager
 import com.unidevteam.cookingapp.util.SyntaxManager
 
 class LoginActivity : AppCompatActivity() {
@@ -206,7 +208,25 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential: success")
-                    gotoProfilePage()
+
+                    DBManager.getCurrentUserExtraInfo()
+                        .addOnCompleteListener{ dSnapTask ->
+                            if(dSnapTask.isSuccessful) {
+                                if(!dSnapTask.result.exists()) {
+                                    val caUser : CAUser = CAUser(
+                                        email = auth.currentUser!!.email!!,
+                                        name = auth.currentUser!!.displayName!!.split(' ')[0],
+                                        surname = auth.currentUser!!.displayName!!.split(' ')[1],
+                                        bio = "Ciao! Sono un nuovo cuoco di CookingApp!"
+                                    )
+
+                                    DBManager.saveUserInfo(caUser)
+                                        .addOnCompleteListener {
+                                            gotoProfilePage()
+                                        }
+                                }
+                            }
+                        }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "signInWithCredential: failure", task.exception)
@@ -251,7 +271,25 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
-                    gotoProfilePage()
+
+                    DBManager.getCurrentUserExtraInfo()
+                        .addOnCompleteListener{ dSnapTask ->
+                            if(dSnapTask.isSuccessful) {
+                                if(!dSnapTask.result.exists()) {
+                                    val caUser : CAUser = CAUser(
+                                        email = auth.currentUser!!.email!!,
+                                        name = auth.currentUser!!.displayName!!.split(' ')[0],
+                                        surname = auth.currentUser!!.displayName!!.split(' ')[1],
+                                        bio = "Ciao! Sono un nuovo cuoco di CookingApp!"
+                                    )
+
+                                    DBManager.saveUserInfo(caUser)
+                                        .addOnCompleteListener {
+                                            gotoProfilePage()
+                                        }
+                                }
+                            }
+                        }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
