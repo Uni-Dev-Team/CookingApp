@@ -59,7 +59,6 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         // Buttons Listener
-
         findViewById<TextView>(R.id.lb_loginPage).setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
@@ -206,11 +205,11 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
+                    Log.d(TAG, "signInWithCredential: success")
                     gotoProfilePage()
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.d(TAG, "signInWithCredential:failure", task.exception)
+                    Log.d(TAG, "signInWithCredential: failure", task.exception)
                     Toast.makeText(this, "Login with Google failed", Toast.LENGTH_SHORT).show()
                 }
             }

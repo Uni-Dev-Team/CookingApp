@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 @Suppress("DEPRECATION")
 class SplashScreenActivity : AppCompatActivity() {
-    private var SPLASH_SCREEN_TIME : Long = 10000
+    private var SPLASH_SCREEN_TIME : Long = 1000
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
