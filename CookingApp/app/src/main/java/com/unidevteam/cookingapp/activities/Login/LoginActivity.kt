@@ -23,6 +23,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.unidevteam.cookingapp.activities.Home.HomeActivity
 import com.unidevteam.cookingapp.models.CAUser
 import com.unidevteam.cookingapp.services.DBManager
 import com.unidevteam.cookingapp.util.SyntaxManager
@@ -106,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                     R.id.tf_password
                 ).text.toString())
                 if (firebaseCheckUserStatus()) {
-                    gotoProfilePage()
+                    gotoHomePage()
                 } else {
                     Log.d(TAG, "Not logged")
                 }
@@ -122,7 +123,7 @@ class LoginActivity : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser: FirebaseUser? = auth.currentUser
         if (currentUser != null) {
-            gotoProfilePage()
+            gotoHomePage()
         }
     }
 
@@ -152,8 +153,8 @@ class LoginActivity : AppCompatActivity() {
     // Functions
 
     // [START goto_login_page]
-    private fun gotoProfilePage(){
-        val intent = Intent(this@LoginActivity, ProfileActivity::class.java)
+    private fun gotoHomePage(){
+        val intent = Intent(this@LoginActivity, HomeActivity::class.java)
         startActivity(intent)
     }
     // [END goto_login_page]
@@ -176,7 +177,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task->
                 if(task.isSuccessful) {
                     Log.d(TAG, "SignIn with email and password: Success!")
-                    gotoProfilePage()
+                    gotoHomePage()
                 } else {
                     Log.d(TAG, "SignIn with email and password: Failed - $task")
                     Toast.makeText(this, "Wrong email or password", Toast.LENGTH_SHORT).show()
@@ -191,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener { task->
                 if (task.isSuccessful) {
                     Log.d(TAG, "SignIn anonymously: Success!")
-                    gotoProfilePage()
+                    gotoHomePage()
                 } else {
                     Log.d(TAG, "SignIn anonymously: Failed - $task")
                     Toast.makeText(this, "Guest sinning failed ", Toast.LENGTH_SHORT).show()
@@ -222,7 +223,7 @@ class LoginActivity : AppCompatActivity() {
 
                                     DBManager.saveUserInfo(caUser)
                                         .addOnCompleteListener {
-                                            gotoProfilePage()
+                                            gotoHomePage()
                                         }
                                 }
                             }
@@ -285,7 +286,7 @@ class LoginActivity : AppCompatActivity() {
 
                                     DBManager.saveUserInfo(caUser)
                                         .addOnCompleteListener {
-                                            gotoProfilePage()
+                                            gotoHomePage()
                                         }
                                 }
                             }
