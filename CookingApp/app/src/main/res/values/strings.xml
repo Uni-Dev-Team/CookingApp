@@ -17,7 +17,7 @@
     <string name="display_name">Display Name:</string>
     <string name="email">Email:</string>
     <string name="is_verified">Is Verified:</string>
-    <string name="logout">logout</string>
+    <string name="logout">Esci</string>
     <string name="disable_user">Disable User</string>
     <string name="delete_user">Delete User</string>
     <string name="email_hint">Inserisci la tua email</string>
@@ -49,5 +49,11 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="username_placeholder">Nome Utente</string>
+    <string name="placeholder_occupation">Utente</string>
+    <string name="bio_title">Biografia</string>
+    <string name="bio_placeholder">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</string>
+    <string name="recipes_title">Ricette</string>
+    <string name="contact_title">Contatti</string>
 
 </resources>
