@@ -55,5 +55,10 @@
     <string name="bio_placeholder">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</string>
     <string name="recipes_title">Ricette</string>
     <string name="contact_title">Contatti</string>
+    <string name="recipe_title_text">Titolo ricetta</string>
+    <string name="recipe_input_text">Inserisci il titolo della ricetta</string>
+    <string name="image_recipe_cover">Recipe Cover Image</string>
+    <string name="add_recipe_text">Aggiungi ricetta</string>
+    <string name="ingredients_text">Ingredienti</string>
 
 </resources>
