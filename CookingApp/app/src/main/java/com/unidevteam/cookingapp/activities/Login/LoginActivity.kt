@@ -132,16 +132,15 @@ class LoginActivity : AppCompatActivity() {
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)!!
-                Log.d(TAG, "firebaseAuthWithGoogle: $account.id")
-                firebaseAuthWithGoogle(account.idToken!!)
-            } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
-                Log.d(TAG, "Google sign in failed: $e")
-            }
+            GoogleSignIn.getSignedInAccountFromIntent(data)
+                .addOnCompleteListener { task ->
+                    val account = task.getResult(ApiException::class.java)!!
+                    Log.d(TAG, "firebaseAuthWithGoogle: $account.id")
+                    firebaseAuthWithGoogle(account.idToken!!)
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "firebaseAuthWithGoogle ERROR: ${e.message.toString()}")
+                }
         }
         if (requestCode == CallbackManagerImpl.RequestCodeOffset.Login.toRequestCode()) {
             // Pass the activity result back to the Facebook SDK
