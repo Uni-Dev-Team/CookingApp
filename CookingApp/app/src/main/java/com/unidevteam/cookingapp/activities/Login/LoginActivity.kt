@@ -224,6 +224,8 @@ class LoginActivity : AppCompatActivity() {
                                         .addOnCompleteListener {
                                             gotoHomePage()
                                         }
+                                } else {
+                                    gotoHomePage()
                                 }
                             }
                         }
