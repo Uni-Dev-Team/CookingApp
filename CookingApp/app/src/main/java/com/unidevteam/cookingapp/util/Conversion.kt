@@ -19,9 +19,17 @@ class Conversion {
     fun cupsToOunces(cups: Double): Double {
         return cups * OUNCES
     }
+    fun cupsToTablespoons(cups: Double): Double {
+        return cups * TABLESPOONS
+    }
+    fun tablespoonsToCups(tablespoons: Double): Double {
+        return tablespoons / TABLESPOONS
+    }
+
     companion object {
         const val GRAMS = 128
         const val OUNCES = 4.5
         const val CUPS = 1
+        const val TABLESPOONS = 16
     }
 }
