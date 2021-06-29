@@ -47,8 +47,9 @@ class AddRecipeFragment : Fragment() {
             timeItems.add(it.toString())
         }
 
-        val difficultyItems = mutableListOf<String>("Facile", "Normale", "Difficile")
-        val costItems = mutableListOf<String>("Basso", "Medio", "Alto")
+        val difficultyItems = listOf<String>("Facile", "Normale", "Difficile")
+        val costItems = listOf<String>("Basso", "Medio", "Alto")
+        val unitItems = listOf<String>("g", "oz", "qt", "qb", "l", "cl", "ml")
 
         val timeListViewAdapter : ArrayAdapter<String> = ArrayAdapter(
             requireContext(),
@@ -68,10 +69,25 @@ class AddRecipeFragment : Fragment() {
             costItems
         )
 
+        val amountUnitListViewAdapter : ArrayAdapter<String> = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            unitItems
+        )
+
+        val ingredientsItems = mutableListOf<String>()
+        val ingredientsListViewAdapter : ArrayAdapter<String> = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            ingredientsItems
+        )
+
         viewOfLayout.findViewById<Spinner>(R.id.recipeTimeSpinner).adapter = timeListViewAdapter
         viewOfLayout.findViewById<Spinner>(R.id.recipeDifficultySpinner).adapter = difficultyListViewAdapter
         viewOfLayout.findViewById<Spinner>(R.id.recipeCostSpinner).adapter = costListViewAdapter
 
+        viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).adapter = amountUnitListViewAdapter
+        viewOfLayout.findViewById<ListView>(R.id.recipeIngredientsListView).adapter = ingredientsListViewAdapter
 
         viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setOnClickListener(){
             // Create an instance of the dialog fragment and show it
@@ -92,12 +108,27 @@ class AddRecipeFragment : Fragment() {
             dialog.show()
         }
 
-        viewOfLayout.findViewById<Button>(R.id.btn_AddFields).setOnClickListener() {
+        // DA REIMPLEMENTARE CON UNA LIST VIEW
+        /*viewOfLayout.findViewById<Button>(R.id.btn_AddFields).setOnClickListener() {
             // creating TextView programmatically
             val newTextView = TextView(activity)
             newTextView.text = "TextView"
             viewOfLayout.findViewById<LinearLayout>(R.id.ingredientsLayout).addView(newTextView)
+        }*/
+
+        viewOfLayout.findViewById<Button>(R.id.recipeAddIngredientButton).setOnClickListener {
+            val ingredientName : String? = viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text?.toString()
+            val ingredientAmount : String? = viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text?.toString()
+            val ingredientUnit : String? = viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).selectedItem?.toString()
+
+            if(ingredientName != null && ingredientAmount != null && ingredientUnit != null) {
+                ingredientsItems.add("$ingredientName - $ingredientAmount $ingredientUnit")
+                ingredientsListViewAdapter.notifyDataSetChanged()
+            } else {
+                Toast.makeText(requireContext(), "Compila tutti i campi", Toast.LENGTH_SHORT).show()
+            }
         }
+
         return viewOfLayout
     }
 
