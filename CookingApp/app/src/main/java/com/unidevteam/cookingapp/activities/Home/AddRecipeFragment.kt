@@ -15,10 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
@@ -93,6 +90,13 @@ class AddRecipeFragment : Fragment() {
             // AlertDialog Builder class
             val dialog: AlertDialog.Builder = builder
             dialog.show()
+        }
+
+        viewOfLayout.findViewById<Button>(R.id.btn_AddFields).setOnClickListener() {
+            // creating TextView programmatically
+            val newTextView = TextView(activity)
+            newTextView.text = "TextView"
+            viewOfLayout.findViewById<LinearLayout>(R.id.ingredientsLayout).addView(newTextView)
         }
         return viewOfLayout
     }
