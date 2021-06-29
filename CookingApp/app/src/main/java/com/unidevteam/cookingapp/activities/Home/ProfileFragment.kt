@@ -27,6 +27,8 @@ import com.google.firebase.storage.ktx.storage
 import com.unidevteam.cookingapp.LoginActivity
 import com.unidevteam.cookingapp.R
 import com.unidevteam.cookingapp.services.DBManager
+import com.unidevteam.cookingapp.util.RequestCodes.Companion.REQUEST_IMAGE_CAPTURE
+import com.unidevteam.cookingapp.util.RequestCodes.Companion.REQUEST_IMAGE_PATH
 import java.io.*
 import java.net.URL
 import java.util.concurrent.Executors
@@ -116,7 +118,7 @@ class ProfileFragment : Fragment() {
             Log.d(TAG, "File selezionato: $selectedFile")
             if (selectedFile != null) {
                 Log.d(TAG, "Path: $selectedFile")
-                // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
+
                 val imagePath : String? = getPathFromInputStreamUri(selectedFile)
                 Log.d(TAG, "IMAGE PATH: $imagePath")
 
@@ -133,7 +135,7 @@ class ProfileFragment : Fragment() {
         // Se fa la foto in tempo reale
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            // TODO: 4/12/2021 Upload the image to FireStore (compressed!!)
+
             uploadProfileImage(imageBitmap)
         }
     }
@@ -250,6 +252,8 @@ class ProfileFragment : Fragment() {
         )
     }
     // [END file_chooser]
+
+    // [START camera_shot]
     private fun cameraShot() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
@@ -259,6 +263,7 @@ class ProfileFragment : Fragment() {
             // display error state to the user
         }
     }
+    // [END camera_shot]
 
     // [START goto_login_page]
     private fun gotoLoginPage(){
@@ -285,7 +290,6 @@ class ProfileFragment : Fragment() {
 
     companion object {
         private const val TAG = "ProfileActivity"
-        private const val REQUEST_IMAGE_PATH = 111
-        private const val REQUEST_IMAGE_CAPTURE = 112
+
     }
 }

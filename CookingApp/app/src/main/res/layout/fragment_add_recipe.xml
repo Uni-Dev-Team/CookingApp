@@ -15,13 +15,13 @@
         android:textAlignment="center"
         android:textColor="@color/browser_actions_text_color"
         android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintBottom_toTopOf="@+id/imageViewRecepie"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageViewRecepie"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginTop="32dp"
@@ -41,7 +41,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2">
+        app:layout_constraintTop_toBottomOf="@+id/imageViewRecepie">
 
         <TextView
             android:id="@+id/recipeTitleText"
@@ -52,7 +52,7 @@
             android:textSize="20sp" />
 
         <EditText
-            android:id="@+id/recipeTitle"
+            android:id="@+id/recepieTitle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="5dp"
