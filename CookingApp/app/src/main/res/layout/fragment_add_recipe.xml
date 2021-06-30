@@ -10,7 +10,6 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="@string/add_recipe_text"
         android:textAlignment="center"
         android:textColor="@color/browser_actions_text_color"
@@ -22,8 +21,8 @@
 
     <ImageView
         android:id="@+id/imageViewRecepie"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="32dp"
         android:contentDescription="@string/image_recipe_cover"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
@@ -145,7 +144,7 @@
         android:id="@+id/textView8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="@string/ingredients_text"
         android:textColor="@color/browser_actions_text_color"
         android:textSize="20sp"
@@ -156,9 +155,10 @@
 
     <ListView
         android:id="@+id/recipeIngredientsListView"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:nestedScrollingEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/recipeNewIngredientValue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -189,9 +189,10 @@
     <LinearLayout
         android:id="@+id/recipeNewIngredientLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recipeNewIngredientValue">
@@ -215,27 +216,79 @@
         <Spinner
             android:id="@+id/recipeNewIngredientUnitSpinner"
             android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:autofillHints="Unità" />
+
+        <Button
+            android:id="@+id/recipeAddIngredientButton"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:layout_weight="2"
-            android:autofillHints="Unità" />
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0"
+            android:text="Aggiungi"
+            android:textAllCaps="false"
+            android:textColor="@color/redOrange"
+            android:textSize="16sp"
+            app:cornerRadius="4dp" />
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/recipeAddIngredientButton"
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_button"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0"
-        android:text="Aggiungi ingrediente"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        app:cornerRadius="4dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Procedura"
+        android:textColor="@color/browser_actions_text_color"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/addRecipeProcess"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recipeNewIngredientLayout" />
+
+    <EditText
+        android:id="@+id/addRecipeProcess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:autofillHints="Scrivi qui la procedura per realizzare la ricetta"
+        android:background="@drawable/rounded_border_edittext"
+        android:ems="10"
+        android:gravity="top"
+        android:hint="Scrivi qui la procedura per realizzare la ricetta"
+        android:inputType="textMultiLine|textPersonName"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="15dp"
+        android:textColorHighlight="@color/redOrangeLight"
+        android:textColorLink="@color/redOrange"
+        android:theme="@style/EditTextTheme"
+        app:layout_constraintBottom_toTopOf="@+id/recipeAddRecipe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_min="150dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <Button
+        android:id="@+id/recipeAddRecipe"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_weight="1"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0"
+        android:text="Aggiungi ricetta"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        app:cornerRadius="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addRecipeProcess" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

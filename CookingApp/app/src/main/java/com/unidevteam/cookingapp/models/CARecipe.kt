@@ -6,22 +6,28 @@ import com.google.firebase.firestore.QuerySnapshot
 data class CARecipe(
     val title: String,
     val ingredients: List<CAIngredient>,
-    val amounts: List<Int>,
-    val time: Int,
+    val time: String,
     val difficulty: String,
     val cost: String,
+    val process: String,
     val likes: Int = 0,
     val chefUID: String
     ) {
 
     fun toHashMap() : HashMap<String, Any> {
+        val ingredientsJSONs : MutableList<Map<String, Any>> = mutableListOf()
+        for(i : Int in ingredients.indices) {
+            val ingJSON : Map<String, Any> = ingredients[i].toHashMap()
+            ingredientsJSONs.add(ingJSON)
+        }
+
         return hashMapOf(
             "title" to title,
-            "ingredients" to ingredients,
-            "amounts" to amounts,
+            "ingredients" to ingredientsJSONs,
             "time" to time,
             "difficulty" to difficulty,
             "cost" to cost,
+            "process" to process,
             "likes" to likes,
             "chefUID" to chefUID
         )
@@ -32,11 +38,11 @@ data class CARecipe(
         fun fromData(data: Map<String, Any>) : CARecipe {
             return CARecipe(
                 title = data["title"].toString(),
-                ingredients = data["ingredients"] as List<CAIngredient>, // Da modificare
-                amounts = data["amounts"] as List<Int>,
-                time = data["time"] as? Int?:-1,
+                ingredients = data["ingredients"] as List<CAIngredient>,
+                time = data["time"].toString(),
                 difficulty = data["difficulty"].toString(),
                 cost = data["cost"].toString(),
+                process = data["process"].toString(),
                 likes = data["likes"] as? Int?:-1,
                 chefUID = data["chefUID"].toString(),
             )

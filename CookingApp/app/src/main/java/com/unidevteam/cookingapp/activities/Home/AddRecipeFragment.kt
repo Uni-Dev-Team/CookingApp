@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -24,6 +25,9 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.unidevteam.cookingapp.R
+import com.unidevteam.cookingapp.models.CAIngredient
+import com.unidevteam.cookingapp.models.CARecipe
+import com.unidevteam.cookingapp.services.DBManager
 import com.unidevteam.cookingapp.util.RequestCodes
 import java.io.*
 import java.net.URL
@@ -33,6 +37,7 @@ class AddRecipeFragment : Fragment() {
     private lateinit var viewOfLayout: View
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val storage = Firebase.storage
+    private var imageLoaded : Boolean = false
 
     @SuppressLint("CutPasteId")
     override fun onCreateView(
@@ -89,7 +94,7 @@ class AddRecipeFragment : Fragment() {
         viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).adapter = amountUnitListViewAdapter
         viewOfLayout.findViewById<ListView>(R.id.recipeIngredientsListView).adapter = ingredientsListViewAdapter
 
-        viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setOnClickListener(){
+        viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setOnClickListener {
             // Create an instance of the dialog fragment and show it
 
             // Use the Builder class for convenient dialog construction
@@ -117,24 +122,88 @@ class AddRecipeFragment : Fragment() {
         }*/
 
         viewOfLayout.findViewById<Button>(R.id.recipeAddIngredientButton).setOnClickListener {
-            val ingredientName : String? = viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text?.toString()
-            val ingredientAmount : String? = viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text?.toString()
-            val ingredientUnit : String? = viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).selectedItem?.toString()
+            val ingredientNameEditText = viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue)
+            val ingredientAmountEditText = viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount)
 
-            if(ingredientName != null && ingredientAmount != null && ingredientUnit != null) {
-                ingredientsItems.add("$ingredientName - $ingredientAmount $ingredientUnit")
+            val ingredientUnit = viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).selectedItem?.toString()
+
+            if(ingredientNameEditText.text.isNotEmpty() && ingredientAmountEditText.text.isNotEmpty()) {
+                ingredientsItems.add("${ingredientNameEditText.text} - ${ingredientAmountEditText.text} $ingredientUnit")
                 ingredientsListViewAdapter.notifyDataSetChanged()
+
+                viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text.clear()
+                viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text.clear()
             } else {
+                Toast.makeText(requireContext(), "Compila tutti i campi", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewOfLayout.findViewById<Button>(R.id.recipeAddRecipe).setOnClickListener {
+            val coverImageView : ImageView = viewOfLayout.findViewById(R.id.imageViewRecepie)
+            val recipeNameEditText : EditText = viewOfLayout.findViewById(R.id.recepieTitle)
+            val timeSpinner : Spinner = viewOfLayout.findViewById(R.id.recipeTimeSpinner)
+            val difficultySpinner : Spinner = viewOfLayout.findViewById(R.id.recipeDifficultySpinner)
+            val costSpinner : Spinner = viewOfLayout.findViewById(R.id.recipeCostSpinner)
+            val ingredientsListView : ListView = viewOfLayout.findViewById(R.id.recipeIngredientsListView)
+            val processEditText : EditText = viewOfLayout.findViewById(R.id.addRecipeProcess)
+
+            // Empty fields check
+            if(recipeNameEditText.text.isNotEmpty() && processEditText.text.isNotEmpty()) {
+                Log.e(TAG, "NOT EMPTY FIELDS CHECK PASSED")
+                // Image loaded check
+                if(imageLoaded) {
+                    Log.e(TAG, "IMAGE LOADED CHECK PASSED")
+                    // Ingredients check
+                    if(!ingredientsListViewAdapter.isEmpty) {
+                        Log.e(TAG, "INGREDIENTS CHECK PASSED")
+
+                        // Create Recipe object and load it to Firestore
+                        val recipeName : String = recipeNameEditText.text.toString()
+                        val timeValue : String = timeSpinner.selectedItem.toString()
+                        val difficultyValue : String = difficultySpinner.selectedItem.toString()
+                        val costValue : String = costSpinner.selectedItem.toString()
+                        val recipeProcess : String = processEditText.text.toString()
+                        val imageData : Bitmap = coverImageView.drawable.toBitmap()
+                        val ingredients : MutableList<CAIngredient> = mutableListOf()
+
+                        for(i : Int in 0 until ingredientsItems.size) {
+                            val ingredientItems : List<String> = ingredientsItems[i].split('-')
+                            val ingredientName : String = ingredientItems[0].replace("\\s".toRegex(), "")
+                            val amountData : List<String> = ingredientItems[1].trim().split(' ')
+                            val ingredientAmount : String = amountData[0]
+                            val ingredientUnit : String = amountData[1]
+
+                            val ingredient : CAIngredient = CAIngredient(ingredientName, ingredientAmount, ingredientUnit)
+
+                            ingredients.add(ingredient)
+                        }
+
+                        val recipe : CARecipe = CARecipe(recipeName, ingredients, timeValue, difficultyValue, costValue, recipeProcess, 0, FirebaseAuth.getInstance().currentUser!!.uid)
+
+                        DBManager.addNewRecipe(recipe)
+                            .addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Ricetta aggiunta con successo!", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(requireContext(), "Si è verificato un errore, riprova", Toast.LENGTH_SHORT).show()
+                            }
+
+                    } else {
+                        // No ingredients added warning
+                        Toast.makeText(requireContext(), "Nessun ingrediente presente", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Image not loaded warning
+                    Toast.makeText(requireContext(), "Devi caricare una foto per la ricetta", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                // Empty fields warning
                 Toast.makeText(requireContext(), "Compila tutti i campi", Toast.LENGTH_SHORT).show()
             }
         }
 
         return viewOfLayout
     }
-
-    // override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    //    super.onViewCreated(view, savedInstanceState)
-    // }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -156,6 +225,7 @@ class AddRecipeFragment : Fragment() {
                 // TODO Upload dell'img solo una volta si decide di caricare la ricetta
                 viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setImageBitmap(bitmap)
 
+                imageLoaded = true
             } else {
                 Log.e(TAG, "Error: selected file was null")
             }
@@ -164,11 +234,8 @@ class AddRecipeFragment : Fragment() {
         // Se fa la foto in tempo reale
         if (requestCode == RequestCodes.REQUEST_IMAGE_CAPTURE && resultCode == AppCompatActivity.RESULT_OK) {
             val bitmap = data?.extras?.get("data") as Bitmap
-
             viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setImageBitmap(bitmap)
-
         }
-
     }
 
     // Functions
