@@ -32,6 +32,7 @@ import java.io.*
 import java.net.URL
 import java.security.MessageDigest
 import java.util.concurrent.Executors
+import java.util.regex.Pattern
 
 class AddRecipeFragment : Fragment() {
     private lateinit var viewOfLayout: View
@@ -128,11 +129,21 @@ class AddRecipeFragment : Fragment() {
             val ingredientUnit = viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).selectedItem?.toString()
 
             if(ingredientNameEditText.text.isNotEmpty() && ingredientAmountEditText.text.isNotEmpty()) {
-                ingredientsItems.add("${ingredientNameEditText.text} - ${ingredientAmountEditText.text} $ingredientUnit")
-                ingredientsListViewAdapter.notifyDataSetChanged()
+                // Controlli formato input
+                if(Pattern.compile("[a-zA-Z ]*").matcher(ingredientNameEditText.text).matches()) {
+                    val amount : String = ingredientAmountEditText.text.toString().trim()
+                    if(Pattern.compile("[0-9]*").matcher(amount).matches()) {
+                        ingredientsItems.add("${ingredientNameEditText.text.trim()} - $amount $ingredientUnit")
+                        ingredientsListViewAdapter.notifyDataSetChanged()
 
-                viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text.clear()
-                viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text.clear()
+                        viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text.clear()
+                        viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text.clear()
+                    } else {
+                        Toast.makeText(requireContext(), "Inserisci un valore numerico", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Caratteri speciali non ammessi", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(requireContext(), "Compila tutti i campi", Toast.LENGTH_SHORT).show()
             }
@@ -170,7 +181,7 @@ class AddRecipeFragment : Fragment() {
 
                         for(i : Int in 0 until ingredientsItems.size) {
                             val ingredientItems : List<String> = ingredientsItems[i].split('-')
-                            val ingredientName : String = ingredientItems[0].replace("\\s".toRegex(), "")
+                            val ingredientName : String = ingredientItems[0].trim()
                             val amountData : List<String> = ingredientItems[1].trim().split(' ')
                             val ingredientAmount : String = amountData[0]
                             val ingredientUnit : String = amountData[1]
@@ -220,7 +231,6 @@ class AddRecipeFragment : Fragment() {
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888
                 val bitmap : Bitmap = BitmapFactory.decodeFile(imagePath, options)
 
-                // TODO Upload dell'img solo una volta si decide di caricare la ricetta
                 viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setImageBitmap(bitmap)
 
                 imageLoaded = true
