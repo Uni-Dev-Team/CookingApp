@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/textView8"
+        app:layout_constraintBottom_toTopOf="@+id/textView10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
@@ -141,6 +141,28 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Numero persone"
+        android:textColor="@color/browser_actions_text_color"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/numOfPeopleSpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout6" />
+
+    <Spinner
+        android:id="@+id/numOfPeopleSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <TextView
         android:id="@+id/textView8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -151,7 +173,7 @@
         app:layout_constraintBottom_toTopOf="@+id/recipeIngredientsListView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+        app:layout_constraintTop_toBottomOf="@+id/numOfPeopleSpinner" />
 
     <ListView
         android:id="@+id/recipeIngredientsListView"
@@ -206,7 +228,7 @@
             android:background="@drawable/rounded_border_edittext"
             android:ems="10"
             android:hint="Quantità"
-            android:inputType="textEmailAddress"
+            android:inputType="number"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:textColorHighlight="@color/redOrangeLight"

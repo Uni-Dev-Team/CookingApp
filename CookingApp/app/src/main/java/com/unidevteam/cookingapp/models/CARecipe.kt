@@ -11,6 +11,7 @@ data class CARecipe(
     val difficulty: String,
     val cost: String,
     val process: String,
+    val numOfPerson: Int,
     val likes: Int = 0,
     val chefUID: String
     ) {
@@ -30,9 +31,14 @@ data class CARecipe(
             "difficulty" to difficulty,
             "cost" to cost,
             "process" to process,
+            "numOfPerson" to numOfPerson,
             "likes" to likes,
             "chefUID" to chefUID
         )
+    }
+
+    override fun toString() : String {
+        return "Image URL: $imageURL\nTitle: $title\nIngredients count: ${ingredients.size}\ntime: $time\ndifficulty: $difficulty\ncost: $cost\nprocess: $process\nnumOfPerson: $numOfPerson"
     }
 
     companion object {
@@ -46,6 +52,7 @@ data class CARecipe(
                 difficulty = data["difficulty"].toString(),
                 cost = data["cost"].toString(),
                 process = data["process"].toString(),
+                numOfPerson = data["numOfPerson"] as? Int?:-1,
                 likes = data["likes"] as? Int?:-1,
                 chefUID = data["chefUID"].toString(),
             )

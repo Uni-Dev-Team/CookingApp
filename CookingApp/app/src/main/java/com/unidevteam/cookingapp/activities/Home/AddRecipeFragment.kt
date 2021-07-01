@@ -48,7 +48,9 @@ class AddRecipeFragment : Fragment() {
     ): View? {
         viewOfLayout = inflater.inflate(R.layout.fragment_add_recipe, container, false)
 
-        var timeItems : MutableList<String> = mutableListOf<String>()
+        val numOfPersonItems : MutableList<String> = mutableListOf("1 persona", "2 persone", "3 persone", "4 persone", "5 persone")
+
+        val timeItems : MutableList<String> = mutableListOf<String>()
         (5..60 step 5).forEach {
             timeItems.add(it.toString())
         }
@@ -56,6 +58,12 @@ class AddRecipeFragment : Fragment() {
         val difficultyItems = listOf<String>("Facile", "Normale", "Difficile")
         val costItems = listOf<String>("Basso", "Medio", "Alto")
         val unitItems = listOf<String>("g", "oz", "qt", "qb", "l", "cl", "ml")
+
+        val numOfPersonAdapter : ArrayAdapter<String> = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            numOfPersonItems
+        )
 
         val timeListViewAdapter : ArrayAdapter<String> = ArrayAdapter(
             requireContext(),
@@ -87,6 +95,8 @@ class AddRecipeFragment : Fragment() {
             android.R.layout.simple_dropdown_item_1line,
             ingredientsItems
         )
+
+        viewOfLayout.findViewById<Spinner>(R.id.numOfPeopleSpinner).adapter = numOfPersonAdapter
 
         viewOfLayout.findViewById<Spinner>(R.id.recipeTimeSpinner).adapter = timeListViewAdapter
         viewOfLayout.findViewById<Spinner>(R.id.recipeDifficultySpinner).adapter = difficultyListViewAdapter
@@ -154,6 +164,7 @@ class AddRecipeFragment : Fragment() {
         viewOfLayout.findViewById<Button>(R.id.recipeAddRecipe).setOnClickListener {
             val coverImageView : ImageView = viewOfLayout.findViewById(R.id.imageViewRecepie)
             val recipeNameEditText : EditText = viewOfLayout.findViewById(R.id.recipeTitle)
+            val numOfPersonSpinner : Spinner = viewOfLayout.findViewById(R.id.numOfPeopleSpinner)
             val timeSpinner : Spinner = viewOfLayout.findViewById(R.id.recipeTimeSpinner)
             val difficultySpinner : Spinner = viewOfLayout.findViewById(R.id.recipeDifficultySpinner)
             val costSpinner : Spinner = viewOfLayout.findViewById(R.id.recipeCostSpinner)
@@ -170,21 +181,9 @@ class AddRecipeFragment : Fragment() {
                     if(!ingredientsListViewAdapter.isEmpty) {
                         Log.e(TAG, "INGREDIENTS CHECK PASSED")
 
-                        val bitmap : Bitmap? = BitmapFactory.decodeResource(requireContext().resources, R.mipmap.ic_recipe_cover_placeholder)
-                        if(bitmap != null) coverImageView.setImageBitmap(bitmap)
-
-                        recipeNameEditText.text.clear()
-                        processEditText.text.clear()
-
-                        ingredientsItems.clear()
-                        ingredientsListViewAdapter.notifyDataSetChanged()
-
-                        timeSpinner.setSelection(0)
-                        difficultySpinner.setSelection(0)
-                        costSpinner.setSelection(0)
-
                         // Create Recipe object and load it to Firestore
                         val recipeName : String = recipeNameEditText.text.toString()
+                        val numOfPersonValue : Int = Integer.parseInt(numOfPersonSpinner.selectedItem.toString().split(" ")[0].trim())
                         val timeValue : String = timeSpinner.selectedItem.toString()
                         val difficultyValue : String = difficultySpinner.selectedItem.toString()
                         val costValue : String = costSpinner.selectedItem.toString()
@@ -204,12 +203,25 @@ class AddRecipeFragment : Fragment() {
                             ingredients.add(ingredient)
                         }
 
-                        val recipe = CARecipe(null, recipeName, ingredients, timeValue, difficultyValue, costValue, recipeProcess, 0, FirebaseAuth.getInstance().currentUser!!.uid)
-
+                        val recipe = CARecipe(null, recipeName, ingredients, timeValue, difficultyValue, costValue, recipeProcess, numOfPersonValue, 0, FirebaseAuth.getInstance().currentUser!!.uid)
+                        Log.e(TAG, recipe.toString())
                         uploadProfileImage(imageData, recipe)
 
-                        // TODO: Show loading UI and disable button press
+                        // TODO: Show loading UI
 
+                        val bitmap : Bitmap? = BitmapFactory.decodeResource(requireContext().resources, R.mipmap.ic_recipe_cover_placeholder)
+                        if(bitmap != null) coverImageView.setImageBitmap(bitmap)
+
+                        recipeNameEditText.text.clear()
+                        processEditText.text.clear()
+
+                        ingredientsItems.clear()
+                        ingredientsListViewAdapter.notifyDataSetChanged()
+
+                        numOfPersonSpinner.setSelection(0)
+                        timeSpinner.setSelection(0)
+                        difficultySpinner.setSelection(0)
+                        costSpinner.setSelection(0)
                     } else {
                         // No ingredients added warning
                         Toast.makeText(requireContext(), "Nessun ingrediente presente", Toast.LENGTH_SHORT).show()
