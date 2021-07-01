@@ -138,6 +138,8 @@ class AddRecipeFragment : Fragment() {
 
                         viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text.clear()
                         viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text.clear()
+
+                        viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).setSelection(0)
                     } else {
                         Toast.makeText(requireContext(), "Inserisci un valore numerico", Toast.LENGTH_SHORT).show()
                     }
@@ -151,7 +153,7 @@ class AddRecipeFragment : Fragment() {
 
         viewOfLayout.findViewById<Button>(R.id.recipeAddRecipe).setOnClickListener {
             val coverImageView : ImageView = viewOfLayout.findViewById(R.id.imageViewRecepie)
-            val recipeNameEditText : EditText = viewOfLayout.findViewById(R.id.recepieTitle)
+            val recipeNameEditText : EditText = viewOfLayout.findViewById(R.id.recipeTitle)
             val timeSpinner : Spinner = viewOfLayout.findViewById(R.id.recipeTimeSpinner)
             val difficultySpinner : Spinner = viewOfLayout.findViewById(R.id.recipeDifficultySpinner)
             val costSpinner : Spinner = viewOfLayout.findViewById(R.id.recipeCostSpinner)
@@ -168,7 +170,18 @@ class AddRecipeFragment : Fragment() {
                     if(!ingredientsListViewAdapter.isEmpty) {
                         Log.e(TAG, "INGREDIENTS CHECK PASSED")
 
-                        // TODO: Empty every field
+                        val bitmap : Bitmap? = BitmapFactory.decodeResource(requireContext().resources, R.mipmap.ic_recipe_cover_placeholder)
+                        if(bitmap != null) coverImageView.setImageBitmap(bitmap)
+
+                        recipeNameEditText.text.clear()
+                        processEditText.text.clear()
+
+                        ingredientsItems.clear()
+                        ingredientsListViewAdapter.notifyDataSetChanged()
+
+                        timeSpinner.setSelection(0)
+                        difficultySpinner.setSelection(0)
+                        costSpinner.setSelection(0)
 
                         // Create Recipe object and load it to Firestore
                         val recipeName : String = recipeNameEditText.text.toString()
