@@ -21,7 +21,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.unidevteam.cookingapp.R
@@ -31,6 +30,7 @@ import com.unidevteam.cookingapp.services.DBManager
 import com.unidevteam.cookingapp.util.RequestCodes
 import java.io.*
 import java.net.URL
+import java.security.MessageDigest
 import java.util.concurrent.Executors
 
 class AddRecipeFragment : Fragment() {
@@ -157,6 +157,8 @@ class AddRecipeFragment : Fragment() {
                     if(!ingredientsListViewAdapter.isEmpty) {
                         Log.e(TAG, "INGREDIENTS CHECK PASSED")
 
+                        // TODO: Empty every field
+
                         // Create Recipe object and load it to Firestore
                         val recipeName : String = recipeNameEditText.text.toString()
                         val timeValue : String = timeSpinner.selectedItem.toString()
@@ -173,20 +175,16 @@ class AddRecipeFragment : Fragment() {
                             val ingredientAmount : String = amountData[0]
                             val ingredientUnit : String = amountData[1]
 
-                            val ingredient : CAIngredient = CAIngredient(ingredientName, ingredientAmount, ingredientUnit)
+                            val ingredient = CAIngredient(ingredientName, ingredientAmount, ingredientUnit)
 
                             ingredients.add(ingredient)
                         }
 
-                        val recipe : CARecipe = CARecipe(recipeName, ingredients, timeValue, difficultyValue, costValue, recipeProcess, 0, FirebaseAuth.getInstance().currentUser!!.uid)
+                        val recipe = CARecipe(null, recipeName, ingredients, timeValue, difficultyValue, costValue, recipeProcess, 0, FirebaseAuth.getInstance().currentUser!!.uid)
 
-                        DBManager.addNewRecipe(recipe)
-                            .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "Ricetta aggiunta con successo!", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(requireContext(), "Si è verificato un errore, riprova", Toast.LENGTH_SHORT).show()
-                            }
+                        uploadProfileImage(imageData, recipe)
+
+                        // TODO: Show loading UI and disable button press
 
                     } else {
                         // No ingredients added warning
@@ -275,7 +273,8 @@ class AddRecipeFragment : Fragment() {
     }
 
     // [START upload_Image_to_Firestore]
-    private fun uploadProfileImage(imageData: Bitmap) {
+    @SuppressLint("CutPasteId")
+    private fun uploadProfileImage(imageData: Bitmap, recipe: CARecipe) {
         lateinit var bitmapImage : Bitmap
 
         // Taglia l'immagine per ottenerne una quadrata
@@ -285,8 +284,7 @@ class AddRecipeFragment : Fragment() {
             val xOffset = (imageData.width - shortestSide) / 2
             val yOffset = (imageData.height - shortestSide) / 2
 
-            bitmapImage =
-                Bitmap.createBitmap(imageData, xOffset, yOffset, shortestSide, shortestSide)
+            bitmapImage = Bitmap.createBitmap(imageData, xOffset, yOffset, shortestSide, shortestSide)
         } else {
             bitmapImage = imageData
         }
@@ -297,7 +295,15 @@ class AddRecipeFragment : Fragment() {
         bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
-        val uploadTask = storageRef.child("recipePics/${user!!.uid}/${viewOfLayout.findViewById<TextView>(R.id.recepieTitle).text}").putBytes(data)
+        val stringToHash : String = recipe.title + recipe.time + recipe.difficulty + recipe.cost + recipe.process
+        val messageDigest = MessageDigest.getInstance("SHA-1").digest(stringToHash.toByteArray(Charsets.UTF_8))
+        val hashedString = StringBuilder()
+        for(b: Byte in messageDigest) {
+            hashedString.append(String.format("%02X", b))
+        }
+        val imageName : String = hashedString.toString()
+
+        val uploadTask = storageRef.child("recipePics/${user!!.uid}/$imageName").putBytes(data)
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
             Log.d(TAG, "Error: ${uploadTask.exception}")
@@ -307,19 +313,16 @@ class AddRecipeFragment : Fragment() {
             Log.d(TAG, "Success: ${taskSnapshot.metadata}")
 
             // TODO: Cambiare reference per il caricamento dell' img della ricetta
-            val downloadURLTask = storageRef.child("recipePics/${user!!.uid}/${viewOfLayout.findViewById<TextView>(R.id.recepieTitle).text}").downloadUrl
+            val downloadURLTask = storageRef.child("recipePics/${user.uid}/$imageName").downloadUrl
             downloadURLTask.addOnSuccessListener { downloadURL ->
-                // Aggiorna il campo dell'URL della foto profilo
-                val profileUpdates = UserProfileChangeRequest.Builder().setPhotoUri(downloadURL).build()
+                recipe.imageURL = downloadURL.toString()
 
-                user.updateProfile(profileUpdates)
-                    .addOnCompleteListener { task ->
-                        if(task.isSuccessful) {
-                            Log.d(TAG, "Log: Photo URL set successively set")
-                            updateImageView()
-                        } else {
-                            Log.d(TAG, "Error: Photo URL set successively failed")
-                        }
+                DBManager.addNewRecipe(recipe)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Ricetta aggiunta con successo!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Si è verificato un errore, riprova", Toast.LENGTH_SHORT).show()
                     }
             }
         }

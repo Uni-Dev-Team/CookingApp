@@ -4,6 +4,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 
 data class CARecipe(
+    var imageURL: String?,
     val title: String,
     val ingredients: List<CAIngredient>,
     val time: String,
@@ -22,6 +23,7 @@ data class CARecipe(
         }
 
         return hashMapOf(
+            "imageURL" to imageURL!!,
             "title" to title,
             "ingredients" to ingredientsJSONs,
             "time" to time,
@@ -37,6 +39,7 @@ data class CARecipe(
         @Suppress("UNCHECKED_CAST")
         fun fromData(data: Map<String, Any>) : CARecipe {
             return CARecipe(
+                imageURL = data["imageURL"].toString(),
                 title = data["title"].toString(),
                 ingredients = data["ingredients"] as List<CAIngredient>,
                 time = data["time"].toString(),
