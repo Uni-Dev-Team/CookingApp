@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#EEE">
+    android:backgroundTint="#EEE"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="50dp">
 
     <TextView
         android:id="@+id/textView3"
@@ -14,10 +17,22 @@
         android:text="Ricette"
         android:textColor="@color/browser_actions_text_color"
         android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/recipeItemsListView"
+        app:layout_constraintBottom_toTopOf="@+id/searchEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Cerca"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="61dp" />
 
     <ListView
         android:id="@+id/recipeItemsListView"
@@ -36,7 +51,7 @@
         android:paddingBottom="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3">
+        app:layout_constraintTop_toBottomOf="@+id/searchEditText">
 
     </ListView>
 </androidx.constraintlayout.widget.ConstraintLayout>
