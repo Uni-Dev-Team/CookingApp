@@ -4,17 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#F3F3F3">
+    android:backgroundTint="#EEE">
 
     <ListView
         android:id="@+id/recipeItemsListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="#F3F3F3"
-        android:padding="30dp"
+        android:background="#000"
+        android:backgroundTint="#EEE"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="25sp"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        android:paddingHorizontal="15dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </ListView>
 </androidx.constraintlayout.widget.ConstraintLayout>

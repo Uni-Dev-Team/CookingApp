@@ -147,12 +147,7 @@ class AddRecipeFragment : Fragment() {
                     if(Pattern.compile("[0-9]*").matcher(amount).matches()) {
                         ingredientsItems.add("${ingredientNameEditText.text.trim()} - $amount $ingredientUnit")
 
-
-
-
-
                         ingredientsListViewAdapter.notifyDataSetChanged()
-
 
                         viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text.clear()
                         viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text.clear()
@@ -172,8 +167,8 @@ class AddRecipeFragment : Fragment() {
         viewOfLayout.findViewById<ListView>(R.id.recipeIngredientsListView).onItemLongClickListener =
             OnItemLongClickListener { arg0, arg1, pos, id -> // TODO Auto-generated method stub
                 val builder = AlertDialog.Builder(context)
-                builder.setMessage("Do you want to delete ${ingredientsItems[id.toInt()].toString()} ?")
-                    .setPositiveButton("Yes"
+                builder.setMessage("Vuoi cancellare ${ingredientsItems[id.toInt()].toString()} ?")
+                    .setPositiveButton("Sì"
                     ) { _, _ ->
                         ingredientsItems.removeAt(id.toInt())
                         ingredientsListViewAdapter.notifyDataSetChanged()
