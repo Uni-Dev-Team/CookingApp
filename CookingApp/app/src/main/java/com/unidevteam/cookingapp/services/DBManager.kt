@@ -22,6 +22,10 @@ class DBManager {
             return usersRef.document(FirebaseAuth.getInstance().currentUser!!.uid).get()
         }
 
+        fun getUserInfoFromUID(uid: String) : Task<DocumentSnapshot> {
+            return usersRef.document(uid).get()
+        }
+
         // Recipes related methods
         fun getRecipesData(batchSize: Long) : Task<QuerySnapshot> {
             return recipesRef.limit(batchSize).get()

@@ -214,6 +214,7 @@ class LoginActivity : AppCompatActivity() {
                             if(dSnapTask.isSuccessful) {
                                 if(!dSnapTask.result.exists()) {
                                     val caUser : CAUser = CAUser(
+                                        imageURL = auth.currentUser!!.photoUrl.toString(),
                                         email = auth.currentUser!!.email!!,
                                         name = auth.currentUser!!.displayName!!.split(' ')[0],
                                         surname = auth.currentUser!!.displayName!!.split(' ')[1],
@@ -279,6 +280,7 @@ class LoginActivity : AppCompatActivity() {
                             if(dSnapTask.isSuccessful) {
                                 if(!dSnapTask.result.exists()) {
                                     val caUser : CAUser = CAUser(
+                                        imageURL = auth.currentUser!!.photoUrl.toString(),
                                         email = auth.currentUser!!.email!!,
                                         name = auth.currentUser!!.displayName!!.split(' ')[0],
                                         surname = auth.currentUser!!.displayName!!.split(' ')[1],

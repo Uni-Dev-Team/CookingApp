@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginVertical="20dp"
     android:backgroundTint="@color/white"
     android:elevation="10dp"
     android:paddingHorizontal="20dp"
@@ -50,8 +51,9 @@
 
     <ImageView
         android:id="@+id/recipeImageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/recipeTitleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,18 +69,16 @@
         android:textColor="@color/browser_actions_text_color"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/recipeInfoValuesLayout"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recipeImageView" />
 
     <LinearLayout
         android:id="@+id/recipeInfoValuesLayout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recipeTitleTextView">
 
@@ -86,12 +86,13 @@
             android:id="@+id/recipeTimeLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/timeIconImageView"
                 android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_height="25dp"
                 app:srcCompat="@drawable/ic_round_timer_24" />
 
             <TextView
@@ -106,13 +107,14 @@
             android:id="@+id/recipeDifficultyLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/difficultyIconImageView"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="25dp"
                 app:srcCompat="@drawable/ic_round_equalizer_24" />
 
             <TextView
@@ -127,12 +129,13 @@
             android:id="@+id/recipeCostLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/costIconImageView"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="25dp"
                 app:srcCompat="@drawable/ic_round_euro_24" />
 
             <TextView

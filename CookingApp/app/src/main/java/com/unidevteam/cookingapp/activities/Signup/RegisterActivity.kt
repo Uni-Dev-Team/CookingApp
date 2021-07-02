@@ -16,6 +16,8 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.unidevteam.cookingapp.activities.Signup.RegisterStep1
 import com.unidevteam.cookingapp.activities.Signup.RegisterStep2
 import com.unidevteam.cookingapp.models.CAUser
@@ -77,46 +79,50 @@ class RegisterActivity : AppCompatActivity() {
                         firebaseCreateUser(_email, _password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    Log.d(TAG, "Registration: User created correctly")
-                                    auth.currentUser?.let { it1 ->
-                                        firebaseSendPasswordVerification(
-                                            it1
-                                        )
-                                    }
+                                    Firebase.storage.reference.child("profilePics/defaultProfile.png").downloadUrl
+                                        .addOnCompleteListener { urlTask ->
+                                            Log.d(TAG, "Registration: User created correctly")
+                                            auth.currentUser?.let { it1 ->
+                                                firebaseSendPasswordVerification(
+                                                    it1
+                                                )
+                                            }
 
-                                    Log.d(TAG, "Email inserita: $_email")
-                                    Log.d(TAG, "Nome inserito: ${_name.split(' ')[0]}")
-                                    Log.d(TAG, "Cognome inserito: ${_name.split(' ')[1]}")
+                                            Log.d(TAG, "Email inserita: $_email")
+                                            Log.d(TAG, "Nome inserito: ${_name.split(' ')[0]}")
+                                            Log.d(TAG, "Cognome inserito: ${_name.split(' ')[1]}")
 
-                                    val caUser : CAUser = CAUser(
-                                        email = _email,
-                                        name = _name.split(' ')[0],
-                                        surname = _name.split(' ')[1],
-                                        bio = "Ciao! Sono un nuovo cuoco di CookingApp!"
-                                    )
+                                            val caUser : CAUser = CAUser(
+                                                imageURL = urlTask.result.toString(),
+                                                email = _email,
+                                                name = _name.split(' ')[0],
+                                                surname = _name.split(' ')[1],
+                                                bio = "Ciao! Sono un nuovo cuoco di CookingApp!"
+                                            )
 
-                                    DBManager.saveUserInfo(caUser)
-                                        .addOnCompleteListener {
-                                            Log.d(TAG, "Dati extra dell'utente salvati correttamente")
+                                            DBManager.saveUserInfo(caUser)
+                                                .addOnCompleteListener {
+                                                    Log.d(TAG, "Dati extra dell'utente salvati correttamente")
 
-                                            val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).build()
+                                                    val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).setPhotoUri(urlTask.result).build()
 
-                                            auth.currentUser!!.updateProfile(profileUpdates)
-                                                .addOnCompleteListener { task2 ->
-                                                    if(task2.isSuccessful) {
-                                                        Log.d(TAG, "Log: Display-name set successively set")
-                                                        auth.signOut()
-                                                        gotoLoginPage()
-                                                    } else {
-                                                        Log.d(
-                                                            TAG,
-                                                            "Error: Display-name set successively failed"
-                                                        )
-                                                    }
+                                                    auth.currentUser!!.updateProfile(profileUpdates)
+                                                        .addOnCompleteListener { task2 ->
+                                                            if(task2.isSuccessful) {
+                                                                Log.d(TAG, "Log: Display-name set successively set")
+                                                                auth.signOut()
+                                                                gotoLoginPage()
+                                                            } else {
+                                                                Log.d(
+                                                                    TAG,
+                                                                    "Error: Display-name set successively failed"
+                                                                )
+                                                            }
+                                                        }
                                                 }
-                                        }
-                                        .addOnFailureListener {
-                                            Log.d(TAG, "Errore nel salvataggio dei dati extra dell'utente")
+                                                .addOnFailureListener {
+                                                    Log.d(TAG, "Errore nel salvataggio dei dati extra dell'utente")
+                                                }
                                         }
                                 } else {
                                     Log.d(TAG, "Registration: Failed - ${task.exception}")

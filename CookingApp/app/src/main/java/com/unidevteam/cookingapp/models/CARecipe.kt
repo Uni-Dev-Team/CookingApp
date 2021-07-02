@@ -52,8 +52,8 @@ data class CARecipe(
                 difficulty = data["difficulty"].toString(),
                 cost = data["cost"].toString(),
                 process = data["process"].toString(),
-                numOfPerson = data["numOfPerson"] as? Int?:-1,
-                likes = data["likes"] as? Int?:-1,
+                numOfPerson = Integer.parseInt(data["numOfPerson"].toString()),
+                likes = Integer.parseInt(data["likes"].toString()),
                 chefUID = data["chefUID"].toString(),
             )
         }

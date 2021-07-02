@@ -5,15 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
+import android.widget.ListView
 import androidx.fragment.app.Fragment
+import com.google.firebase.firestore.DocumentSnapshot
 import com.unidevteam.cookingapp.R
+import com.unidevteam.cookingapp.components.RecipeItemAdapter
 import com.unidevteam.cookingapp.models.CARecipe
 import com.unidevteam.cookingapp.services.DBManager
 
 class HomeFragment : Fragment() {
     private lateinit var viewOfLayout : View
-    val recipeScrollView : ScrollView = viewOfLayout.findViewById(R.id.homeRecipesScrollView)
+    private val recipesList : MutableList<CARecipe> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,19 +24,28 @@ class HomeFragment : Fragment() {
     ) : View? {
         viewOfLayout = inflater.inflate(R.layout.fragment_home, container, false)
 
+        val titles : MutableList<String> = mutableListOf()
+
+        val recipesAdapter = RecipeItemAdapter(requireActivity(), recipesList, titles)
+        val recipeListView : ListView = viewOfLayout.findViewById(R.id.recipeItemsListView)
+        recipeListView.adapter = recipesAdapter
+
         DBManager.getRecipesData(10)
             .addOnSuccessListener {
-
+                for(dSnap : DocumentSnapshot in it.documents) {
+                    val recipe : CARecipe = CARecipe.fromData(dSnap.data!!)
+                    titles.add(recipe.title)
+                    recipesList.add(recipe)
+                }
+                if(it.documents.size > 0) {
+                    recipesAdapter.notifyDataSetChanged()
+                }
             }
             .addOnFailureListener {
                 Log.e(TAG, it.message.toString())
             }
 
         return viewOfLayout
-    }
-
-    private fun addRecipeItems(recipeItems: List<CARecipe>) {
-
     }
 
     companion object {
