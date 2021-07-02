@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import android.widget.AdapterView.OnItemLongClickListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
@@ -168,6 +169,24 @@ class AddRecipeFragment : Fragment() {
             }
         }
 
+        viewOfLayout.findViewById<ListView>(R.id.recipeIngredientsListView).onItemLongClickListener =
+            OnItemLongClickListener { arg0, arg1, pos, id -> // TODO Auto-generated method stub
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("Do you want to delete ${ingredientsItems[id.toInt()].toString()} ?")
+                    .setPositiveButton("Yes"
+                    ) { _, _ ->
+                        ingredientsItems.removeAt(id.toInt())
+                        ingredientsListViewAdapter.notifyDataSetChanged()
+                    }
+                    .setNegativeButton("No"
+                    ) { _, _ ->
+
+                    }
+                // AlertDialog Builder class
+                val dialog: AlertDialog.Builder = builder
+                dialog.show()
+                true
+            }
         viewOfLayout.findViewById<Button>(R.id.recipeAddRecipe).setOnClickListener {
             val coverImageView : ImageView = viewOfLayout.findViewById(R.id.imageViewRecepie)
             val recipeNameEditText : EditText = viewOfLayout.findViewById(R.id.recipeTitle)
