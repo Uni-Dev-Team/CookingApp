@@ -34,6 +34,7 @@ import java.security.MessageDigest
 import java.util.concurrent.Executors
 import java.util.regex.Pattern
 
+
 class AddRecipeFragment : Fragment() {
     private lateinit var viewOfLayout: View
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
@@ -45,7 +46,7 @@ class AddRecipeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewOfLayout = inflater.inflate(R.layout.fragment_add_recipe, container, false)
 
         val numOfPersonItems : MutableList<String> = mutableListOf("1 persona", "2 persone", "3 persone", "4 persone", "5 persone")
@@ -144,7 +145,13 @@ class AddRecipeFragment : Fragment() {
                     val amount : String = ingredientAmountEditText.text.toString().trim()
                     if(Pattern.compile("[0-9]*").matcher(amount).matches()) {
                         ingredientsItems.add("${ingredientNameEditText.text.trim()} - $amount $ingredientUnit")
+
+
+
+
+
                         ingredientsListViewAdapter.notifyDataSetChanged()
+
 
                         viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientValue).text.clear()
                         viewOfLayout.findViewById<EditText>(R.id.recipeNewIngredientAmount).text.clear()
