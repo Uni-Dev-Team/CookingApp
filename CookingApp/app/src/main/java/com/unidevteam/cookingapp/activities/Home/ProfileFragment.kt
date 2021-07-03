@@ -50,7 +50,6 @@ class ProfileFragment : Fragment() {
             firebaseAuthSignOut()
             gotoLoginPage()
         }
-
         DBManager.getCurrentUserExtraInfo()
             .addOnCompleteListener { task ->
                 if(task.isSuccessful) {

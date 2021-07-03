@@ -1,5 +1,6 @@
 package com.unidevteam.cookingapp.activities.Home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.unidevteam.cookingapp.services.DBManager
 class HomeFragment : Fragment() {
     private lateinit var viewOfLayout : View
 
+    @SuppressLint("CutPasteId")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

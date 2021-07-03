@@ -1,8 +1,10 @@
 package com.unidevteam.cookingapp.models
 
+import android.annotation.SuppressLint
 import android.os.Parcel
 import android.os.Parcelable
 
+@SuppressLint("ParcelCreator")
 data class CARecipe(
     var imageURL: String?,
     val title: String,
@@ -54,6 +56,15 @@ data class CARecipe(
             "likes" to likes,
             "chefUID" to chefUID
         )
+    }
+
+    // TODO: modificare la lista della spesa per ottenere anche le porzioni
+    fun toGroceryList() : String {
+        var groceryList = StringBuilder()
+        for(ingredient : CAIngredient in ingredients){
+            groceryList.append("${ingredient}\n")
+        }
+        return groceryList.toString().trim()
     }
 
     override fun toString() : String {

@@ -17,7 +17,7 @@ import com.unidevteam.cookingapp.services.DBManager
 import java.net.URL
 import java.util.concurrent.Executors
 
-class RecipeItemAdapter(context : Context, private val recipes : List<CARecipe>)
+class RecipeItemAdapter(context: Context, private val recipes: MutableList<CARecipe>)
     : ArrayAdapter<CARecipe>(context, R.layout.recipe_item, recipes), Filterable {
     private var allRecipes : List<CARecipe>? = recipes
 
@@ -29,7 +29,7 @@ class RecipeItemAdapter(context : Context, private val recipes : List<CARecipe>)
         return if (allRecipes == null) null else allRecipes!!.get(p0)
     }
 
-    @SuppressLint("ViewHolder")
+    @SuppressLint("ViewHolder", "SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val inflater = LayoutInflater.from(context)
         val rowView = inflater.inflate(R.layout.recipe_item, parent, false)
@@ -92,7 +92,8 @@ class RecipeItemAdapter(context : Context, private val recipes : List<CARecipe>)
                         it.time.toLowerCase().contains(queryString) ||
                         it.difficulty.toLowerCase().contains(queryString) ||
                         it.cost.toLowerCase().contains(queryString) ||
-                        it.ingredientsString.toLowerCase().contains(queryString)
+                        it.ingredientsString.toLowerCase().contains(queryString) ||
+                        it.chefUID.toLowerCase().contains(queryString)
                     }
 
                 return filterResults
