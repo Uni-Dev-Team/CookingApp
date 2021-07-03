@@ -18,9 +18,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CookingApp">
         <activity android:name=".activities.Home.HomeActivity"></activity>
-        <activity
-            android:name=".HomeActivity"
-            android:label="@string/title_activity_home" />
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".SplashScreenActivity"
@@ -33,7 +30,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".ProfileActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
