@@ -30,6 +30,15 @@ class HomeFragment : Fragment() {
             val recipeListView: ListView = viewOfLayout.findViewById(R.id.recipeItemsListView)
             recipeListView.adapter = recipesAdapter
 
+            recipeListView.setOnItemClickListener { parent, view, position, id ->
+                val element = recipesAdapter.getItem(position)
+
+                val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.fl_wrapper, RecipeInfoFragment.newInstance(element!!))
+                transaction.disallowAddToBackStack()
+                transaction.commit()
+            }
+
             val searchText = viewOfLayout.findViewById<EditText>(R.id.searchEditText).text
             DBManager.getRecipesData(10)
                 .addOnSuccessListener {

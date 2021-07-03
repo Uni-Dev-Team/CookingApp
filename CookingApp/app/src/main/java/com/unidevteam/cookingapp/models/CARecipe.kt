@@ -1,6 +1,7 @@
 package com.unidevteam.cookingapp.models
 
-import android.util.Log
+import android.os.Parcel
+import android.os.Parcelable
 
 data class CARecipe(
     var imageURL: String?,
@@ -13,7 +14,26 @@ data class CARecipe(
     val numOfPerson: Int,
     val likes: Int = 0,
     val chefUID: String
-    ) {
+    ) : Parcelable {
+    var ingredientsString : String
+
+    init {
+        val res = StringBuilder()
+
+        for(ingredient: CAIngredient in ingredients) {
+            res.append("${ingredient.name} ")
+        }
+
+        ingredientsString = res.toString()
+    }
+
+    override fun describeContents(): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        TODO("Not yet implemented")
+    }
 
     fun toHashMap() : HashMap<String, Any> {
         val ingredientsJSONs : MutableList<Map<String, Any>> = mutableListOf()
@@ -40,25 +60,18 @@ data class CARecipe(
         return "Image URL: $imageURL\nTitle: $title\nIngredients count: ${ingredients.size}\ntime: $time\ndifficulty: $difficulty\ncost: $cost\nprocess: $process\nnumOfPerson: $numOfPerson"
     }
 
-    fun ingredientsToString() : String {
-        var res : String = ""
-
-        for(ingredient: CAIngredient in ingredients) {
-            res += "${ingredient.name} "
-        }
-
-        Log.e(TAG, res)
-
-        return res
-    }
-
     companion object {
         @Suppress("UNCHECKED_CAST")
         fun fromData(data: Map<String, Any>) : CARecipe {
+            val ings : MutableList<CAIngredient> = mutableListOf()
+            for(ing : Map<String, Any> in (data["ingredients"] as List<Map<String, Any>>)) {
+                ings.add(CAIngredient.fromData(ing))
+            }
+
             return CARecipe(
                 imageURL = data["imageURL"].toString(),
                 title = data["title"].toString(),
-                ingredients = data["ingredients"] as List<CAIngredient>,
+                ingredients = ings,
                 time = data["time"].toString(),
                 difficulty = data["difficulty"].toString(),
                 cost = data["cost"].toString(),

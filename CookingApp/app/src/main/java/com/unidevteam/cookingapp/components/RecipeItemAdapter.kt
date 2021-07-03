@@ -5,12 +5,15 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.unidevteam.cookingapp.R
 import com.unidevteam.cookingapp.models.CARecipe
+import com.unidevteam.cookingapp.models.CAUser
+import com.unidevteam.cookingapp.services.DBManager
 import java.net.URL
 import java.util.concurrent.Executors
 
@@ -48,21 +51,24 @@ class RecipeItemAdapter(context : Context, private val recipes : List<CARecipe>)
         }
 
         // Get user info
-        /*DBManager.getUserInfoFromUID(allRecipes[position].chefUID)
+        DBManager.getUserInfoFromUID(allRecipes!![position].chefUID)
             .addOnSuccessListener {
                 val user : CAUser = CAUser.fromData(it.data!!)
-                // rowView.findViewById<ImageView>(R.id.userProfilePictureImageView).setImageBitmap()
                 rowView.findViewById<TextView>(R.id.userDisplayNameTextView).text = "${user.name} ${user.surname}"
 
-                // var url = URL(user.imageURL)
-                // Log.e(TAG, "URL: $url")
-                // var bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                // rowView.findViewById<ImageView>(R.id.userProfilePictureImageView).setImageBitmap(bmp)
+                /*val executor = Executors.newSingleThreadExecutor()
+                val handler = Handler(Looper.getMainLooper())
+                executor.execute {
+                    val url = URL(user.imageURL)
+                    val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                    handler.post {
+                        rowView.findViewById<ImageView>(R.id.userProfilePictureImageView).setImageBitmap(bmp)
+                    }
+                }*/
             }
             .addOnFailureListener {
                 Log.e(TAG, "Errore")
             }
-         */
         return rowView
     }
 
@@ -86,7 +92,7 @@ class RecipeItemAdapter(context : Context, private val recipes : List<CARecipe>)
                         it.time.toLowerCase().contains(queryString) ||
                         it.difficulty.toLowerCase().contains(queryString) ||
                         it.cost.toLowerCase().contains(queryString) ||
-                        it.ingredientsToString().toLowerCase().contains(queryString)
+                        it.ingredientsString.toLowerCase().contains(queryString)
                     }
 
                 return filterResults
