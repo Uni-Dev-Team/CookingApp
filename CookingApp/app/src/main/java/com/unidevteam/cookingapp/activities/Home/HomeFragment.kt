@@ -5,20 +5,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.DocumentSnapshot
 import com.unidevteam.cookingapp.R
 import com.unidevteam.cookingapp.components.RecipeItemAdapter
 import com.unidevteam.cookingapp.models.CARecipe
 import com.unidevteam.cookingapp.services.DBManager
-import kotlin.math.log
 
 class HomeFragment : Fragment() {
     private lateinit var viewOfLayout : View
-    private val recipesList : MutableList<CARecipe> = mutableListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,35 +25,37 @@ class HomeFragment : Fragment() {
     ) : View? {
         viewOfLayout = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val titles : MutableList<String> = mutableListOf()
+            val recipesList : MutableList<CARecipe> = mutableListOf()
+            val recipesAdapter = RecipeItemAdapter(requireContext(), recipesList)
+            val recipeListView: ListView = viewOfLayout.findViewById(R.id.recipeItemsListView)
+            recipeListView.adapter = recipesAdapter
 
-        var recipesAdapter = RecipeItemAdapter(requireActivity(), recipesList, titles)
-        var recipeListView : ListView = viewOfLayout.findViewById(R.id.recipeItemsListView)
-        recipeListView.adapter = recipesAdapter
+            val searchText = viewOfLayout.findViewById<EditText>(R.id.searchEditText).text
+            DBManager.getRecipesData(10)
+                .addOnSuccessListener {
+                    if (searchText.isBlank()) {
+                        for (dSnap: DocumentSnapshot in it.documents) {
+                            val recipe: CARecipe = CARecipe.fromData(dSnap.data!!)
+                            recipesList.add(recipe)
+                        }
+                        if (it.documents.size > 0) {
+                            recipesAdapter.notifyDataSetChanged()
+                        }
+                    }
 
-        var searchText = viewOfLayout.findViewById<EditText>(R.id.searchEditText).text
-        DBManager.getRecipesData(10)
-            .addOnSuccessListener {
-                if(searchText.isBlank()){
-                    for(dSnap : DocumentSnapshot in it.documents) {
-                        val recipe : CARecipe = CARecipe.fromData(dSnap.data!!)
-                        titles.add(recipe.title)
-                        recipesList.add(recipe)
-                    }
-                    if(it.documents.size > 0) {
-                        recipesAdapter.notifyDataSetChanged()
-                    }
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, it.message.toString())
                 }
 
-            }
-            .addOnFailureListener {
-                Log.e(TAG, it.message.toString())
+            viewOfLayout.findViewById<Button>(R.id.searchButton).setOnClickListener {
+                val searchValue : String = viewOfLayout.findViewById<EditText>(R.id.searchEditText).text.toString()
+
+                if(searchValue.isNotEmpty()) {
+                   recipesAdapter.filter.filter(searchValue)
+                }
             }
 
-        viewOfLayout.findViewById<EditText>(R.id.searchEditText).addTextChangedListener{
-            //TODO: Ricerca in base a searchText
-
-        }
         return viewOfLayout
     }
 

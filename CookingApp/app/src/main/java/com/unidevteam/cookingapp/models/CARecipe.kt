@@ -1,7 +1,6 @@
 package com.unidevteam.cookingapp.models
 
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
+import android.util.Log
 
 data class CARecipe(
     var imageURL: String?,
@@ -41,6 +40,18 @@ data class CARecipe(
         return "Image URL: $imageURL\nTitle: $title\nIngredients count: ${ingredients.size}\ntime: $time\ndifficulty: $difficulty\ncost: $cost\nprocess: $process\nnumOfPerson: $numOfPerson"
     }
 
+    fun ingredientsToString() : String {
+        var res : String = ""
+
+        for(ingredient: CAIngredient in ingredients) {
+            res += "${ingredient.name} "
+        }
+
+        Log.e(TAG, res)
+
+        return res
+    }
+
     companion object {
         @Suppress("UNCHECKED_CAST")
         fun fromData(data: Map<String, Any>) : CARecipe {
@@ -58,13 +69,6 @@ data class CARecipe(
             )
         }
 
-        fun getRecipesData(qSnap: QuerySnapshot) : List<CARecipe> {
-            val recipes : MutableList<CARecipe> = mutableListOf()
-            for(dSnap : DocumentSnapshot in qSnap.documents) {
-                if(dSnap.exists())
-                    recipes.add(CARecipe.fromData(dSnap.data!!))
-            }
-            return recipes
-        }
+        private val TAG = "Recipe"
     }
 }
