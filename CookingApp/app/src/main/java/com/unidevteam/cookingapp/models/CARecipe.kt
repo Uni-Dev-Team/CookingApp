@@ -6,6 +6,7 @@ import android.os.Parcelable
 
 @SuppressLint("ParcelCreator")
 data class CARecipe(
+    var recipeID: String,
     var imageURL: String?,
     val title: String,
     val ingredients: List<CAIngredient>,
@@ -15,7 +16,9 @@ data class CARecipe(
     val process: String,
     val numOfPerson: Int,
     val likes: Int = 0,
-    val chefUID: String
+    val chefUID: String,
+    val typePortata: String,
+    val typology: String
     ) : Parcelable {
     var ingredientsString : String
 
@@ -34,7 +37,7 @@ data class CARecipe(
     }
 
     override fun writeToParcel(dest: Parcel?, flags: Int) {
-        dest!!.writeStringArray(arrayOf(imageURL, title, time, difficulty, cost, process, numOfPerson.toString(), likes.toString(), chefUID))
+        dest!!.writeStringArray(arrayOf(recipeID, imageURL, title, time, difficulty, cost, process, numOfPerson.toString(), likes.toString(), chefUID, typePortata, typology))
     }
 
     fun toHashMap() : HashMap<String, Any> {
@@ -45,6 +48,7 @@ data class CARecipe(
         }
 
         return hashMapOf(
+            "recipeID" to recipeID,
             "imageURL" to imageURL!!,
             "title" to title,
             "ingredients" to ingredientsJSONs,
@@ -54,7 +58,9 @@ data class CARecipe(
             "process" to process,
             "numOfPerson" to numOfPerson,
             "likes" to likes,
-            "chefUID" to chefUID
+            "chefUID" to chefUID,
+            "typePortata" to typePortata,
+            "typology" to typology
         )
     }
 
@@ -71,6 +77,7 @@ data class CARecipe(
             }
 
             return CARecipe(
+                recipeID = data["recipeID"].toString(),
                 imageURL = data["imageURL"].toString(),
                 title = data["title"].toString(),
                 ingredients = ings,
@@ -81,6 +88,8 @@ data class CARecipe(
                 numOfPerson = Integer.parseInt(data["numOfPerson"].toString()),
                 likes = Integer.parseInt(data["likes"].toString()),
                 chefUID = data["chefUID"].toString(),
+                typePortata = data["typePortata"].toString(),
+                typology = data["typology"].toString()
             )
         }
 

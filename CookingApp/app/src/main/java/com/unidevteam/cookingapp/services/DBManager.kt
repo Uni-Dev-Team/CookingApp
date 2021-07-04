@@ -3,7 +3,10 @@ package com.unidevteam.cookingapp.services
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.unidevteam.cookingapp.models.CARecipe
 import com.unidevteam.cookingapp.models.CAUser
 
@@ -27,6 +30,10 @@ class DBManager {
             return usersRef.document(uid).get()
         }
 
+        fun genRecipeDocumentID() : String {
+            return recipesRef.document().id
+        }
+
         // Recipes related methods
         fun getRecipesData(batchSize: Long) : Task<QuerySnapshot> {
             // Get recipes of current user
@@ -36,10 +43,10 @@ class DBManager {
             return recipesRef.limit(batchSize).get()
         }
 
-        fun addNewRecipe(recipe: CARecipe) : Task<DocumentReference> {
+        fun addNewRecipe(recipe: CARecipe) : Task<Void> {
             val recipeMap : Map<String, Any> = recipe.toHashMap()
 
-            return recipesRef.add(recipeMap)
+            return recipesRef.document(recipe.recipeID).set(recipeMap)
         }
 
         fun getRecipe(recipe: CARecipe) : Task<QuerySnapshot> {

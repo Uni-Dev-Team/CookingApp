@@ -92,7 +92,9 @@ class RecipeItemAdapter(context: Context, private val recipes: MutableList<CARec
                         it.time.toLowerCase().contains(queryString) ||
                         it.difficulty.toLowerCase().contains(queryString) ||
                         it.cost.toLowerCase().contains(queryString) ||
-                        it.ingredientsString.toLowerCase().contains(queryString)
+                        it.ingredientsString.toLowerCase().contains(queryString) ||
+                        it.typePortata.toLowerCase().contains(queryString) ||
+                        it.typology.toLowerCase().contains(queryString)
                     }
 
                 return filterResults

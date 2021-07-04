@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 import com.unidevteam.cookingapp.R
 import com.unidevteam.cookingapp.models.CAIngredient
 import com.unidevteam.cookingapp.models.CARecipe
@@ -141,31 +142,44 @@ class RecipeInfoFragment : Fragment() {
                         startActivity(Intent.createChooser(intent, "Condividi con"))
                     }
                     it.itemId == R.id.remove -> {
+                        if(recipe.chefUID != FirebaseAuth.getInstance().currentUser!!.uid) {
+                            Toast.makeText(requireContext(), "Non sei il proprietario di questa ricetta!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            val builder = AlertDialog.Builder(context)
+                            builder.setMessage("Sei sicuro di voler eliminare questa ricetta?")
+                                .setNegativeButton(
+                                    "Annulla"
+                                ) { _, _ -> }
+                                .setPositiveButton(
+                                    "Elimina"
+                                ) { _, _ ->
+                                    DBManager.getRecipe(recipe)
+                                        .addOnSuccessListener {
+                                            if (it.documents.size > 0) {
+                                                val docId: String = it.documents.first().id
 
-                        val builder = AlertDialog.Builder(context)
-                        builder.setMessage("Sei sicuro di voler eliminare questa ricetta?")
-                            .setNegativeButton("Annulla"
-                            ) { _, _ -> }
-                            .setPositiveButton("Elimina"
-                            ) { _, _ ->
-                                DBManager.getRecipe(recipe)
-                                    .addOnSuccessListener {
-                                        if(it.documents.size > 0) {
-                                            val docId: String = it.documents.first().id
+                                                Log.e(TAG, "ID DOCUMENTO: $docId")
 
-                                            Log.e(TAG, "ID DOCUMENTO: $docId")
-
-                                            DBManager.removeRecipe(docId)
-                                            Toast.makeText(requireContext(), "Ricetta rimossa", Toast.LENGTH_SHORT).show()
-                                            requireActivity().onBackPressed()
-                                        } else {
-                                            Toast.makeText(requireContext(), "Errore imprevisto", Toast.LENGTH_SHORT).show()
+                                                DBManager.removeRecipe(docId)
+                                                Toast.makeText(
+                                                    requireContext(),
+                                                    "Ricetta rimossa",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                requireActivity().onBackPressed()
+                                            } else {
+                                                Toast.makeText(
+                                                    requireContext(),
+                                                    "Errore imprevisto",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         }
-                                    }
-                            }
-                        // AlertDialog Builder class
-                        val dialog: AlertDialog.Builder = builder
-                        dialog.show()
+                                }
+                            // AlertDialog Builder class
+                            val dialog: AlertDialog.Builder = builder
+                            dialog.show()
+                        }
                     }
                 }
                 true

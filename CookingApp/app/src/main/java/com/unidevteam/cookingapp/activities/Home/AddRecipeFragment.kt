@@ -61,6 +61,9 @@ class AddRecipeFragment : Fragment() {
         val costItems = listOf<String>("Basso", "Medio", "Alto")
         val unitItems = listOf<String>("g", "oz", "qt", "qb", "l", "cl", "ml")
 
+        val typePortataItems = listOf("Generale", "Antipasto", "Primo", "Secondo", "Dolce")
+        val typologyItems = listOf("Tutto", "Carne", "Pesce", "Vegetariano", "Vegano")
+
         val numOfPersonAdapter : ArrayAdapter<String> = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
@@ -85,6 +88,18 @@ class AddRecipeFragment : Fragment() {
             costItems
         )
 
+        val typePortataAdapter : ArrayAdapter<String> = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            typePortataItems
+        )
+
+        val typologyAdapter : ArrayAdapter<String> = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            typologyItems
+        )
+
         val amountUnitListViewAdapter : ArrayAdapter<String> = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
@@ -106,6 +121,9 @@ class AddRecipeFragment : Fragment() {
 
         viewOfLayout.findViewById<Spinner>(R.id.recipeNewIngredientUnitSpinner).adapter = amountUnitListViewAdapter
         viewOfLayout.findViewById<ListView>(R.id.recipeIngredientsListView).adapter = ingredientsListViewAdapter
+
+        viewOfLayout.findViewById<Spinner>(R.id.typePortataSpinner).adapter = typePortataAdapter
+        viewOfLayout.findViewById<Spinner>(R.id.typologySpinner).adapter = typologyAdapter
 
         viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setOnClickListener {
             // Create an instance of the dialog fragment and show it
@@ -191,6 +209,8 @@ class AddRecipeFragment : Fragment() {
             val costSpinner : Spinner = viewOfLayout.findViewById(R.id.recipeCostSpinner)
             val ingredientsListView : ListView = viewOfLayout.findViewById(R.id.recipeIngredientsListView)
             val processEditText : EditText = viewOfLayout.findViewById(R.id.addRecipeProcess)
+            val typePortataSpinner : Spinner = viewOfLayout.findViewById(R.id.typePortataSpinner)
+            val typologySpinner : Spinner = viewOfLayout.findViewById(R.id.typologySpinner)
 
             // Empty fields check
             if(recipeNameEditText.text.isNotEmpty() && processEditText.text.isNotEmpty()) {
@@ -211,6 +231,8 @@ class AddRecipeFragment : Fragment() {
                         val recipeProcess : String = processEditText.text.toString()
                         val imageData : Bitmap = coverImageView.drawable.toBitmap()
                         val ingredients : MutableList<CAIngredient> = mutableListOf()
+                        val typePortataValue : String = typePortataSpinner.selectedItem.toString()
+                        val typologyValue : String = typologySpinner.selectedItem.toString()
 
                         for(i : Int in 0 until ingredientsItems.size) {
                             val ingredientItems : List<String> = ingredientsItems[i].split('-')
@@ -224,12 +246,26 @@ class AddRecipeFragment : Fragment() {
                             ingredients.add(ingredient)
                         }
 
-                        val recipe = CARecipe(null, recipeName, ingredients, timeValue, difficultyValue, costValue, recipeProcess, numOfPersonValue, 0, FirebaseAuth.getInstance().currentUser!!.uid)
-                        Log.e(TAG, recipe.toString())
+                        val docID = DBManager.genRecipeDocumentID()
+
+                        val recipe = CARecipe(
+                            docID,
+                            null,
+                            recipeName,
+                            ingredients,
+                            timeValue,
+                            difficultyValue,
+                            costValue,
+                            recipeProcess,
+                            numOfPersonValue,
+                            0,
+                            FirebaseAuth.getInstance().currentUser!!.uid,
+                            typePortataValue,
+                            typologyValue
+                        )
                         uploadProfileImage(imageData, recipe)
 
                         // TODO: Show loading UI
-
                         val bitmap : Bitmap? = BitmapFactory.decodeResource(requireContext().resources, R.mipmap.ic_recipe_cover_placeholder)
                         if(bitmap != null) coverImageView.setImageBitmap(bitmap)
 
@@ -243,6 +279,8 @@ class AddRecipeFragment : Fragment() {
                         timeSpinner.setSelection(0)
                         difficultySpinner.setSelection(0)
                         costSpinner.setSelection(0)
+                        typePortataSpinner.setSelection(0)
+                        typologySpinner.setSelection(0)
                     } else {
                         // No ingredients added warning
                         Toast.makeText(requireContext(), "Nessun ingrediente presente", Toast.LENGTH_SHORT).show()
@@ -367,7 +405,6 @@ class AddRecipeFragment : Fragment() {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             Log.d(TAG, "Success: ${taskSnapshot.metadata}")
-
 
             val downloadURLTask = storageRef.child("recipePics/${user.uid}/$imageName").downloadUrl
             downloadURLTask.addOnSuccessListener { downloadURL ->
