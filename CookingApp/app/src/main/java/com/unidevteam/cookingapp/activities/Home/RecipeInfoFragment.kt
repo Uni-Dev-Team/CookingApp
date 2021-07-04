@@ -1,6 +1,7 @@
 package com.unidevteam.cookingapp.activities.Home
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.unidevteam.cookingapp.R
 import com.unidevteam.cookingapp.models.CAIngredient
 import com.unidevteam.cookingapp.models.CARecipe
+import com.unidevteam.cookingapp.services.DBManager
 import java.net.URL
 import java.util.concurrent.Executors
 
@@ -49,7 +51,7 @@ class RecipeInfoFragment : Fragment() {
         viewOfLayout.findViewById<ListView>(R.id.ingredientsListView).adapter = ingredientsListViewAdapter
 
         viewOfLayout.findViewById<Button>(R.id.goBackButton).setOnClickListener {
-            activity?.onBackPressed();
+            requireActivity().onBackPressed();
         }
 
         arguments?.getParcelable<CARecipe>("recipe")?.let {
@@ -139,7 +141,31 @@ class RecipeInfoFragment : Fragment() {
                         startActivity(Intent.createChooser(intent, "Condividi con"))
                     }
                     it.itemId == R.id.remove -> {
-                        Toast.makeText(requireContext(), "Rimozione ricetta", Toast.LENGTH_SHORT).show()
+
+                        val builder = AlertDialog.Builder(context)
+                        builder.setMessage("Sei sicuro di voler eliminare questa ricetta?")
+                            .setNegativeButton("Annulla"
+                            ) { _, _ -> }
+                            .setPositiveButton("Elimina"
+                            ) { _, _ ->
+                                DBManager.getRecipe(recipe)
+                                    .addOnSuccessListener {
+                                        if(it.documents.size > 0) {
+                                            val docId: String = it.documents.first().id
+
+                                            Log.e(TAG, "ID DOCUMENTO: $docId")
+
+                                            DBManager.removeRecipe(docId)
+                                            Toast.makeText(requireContext(), "Ricetta rimossa", Toast.LENGTH_SHORT).show()
+                                            requireActivity().onBackPressed()
+                                        } else {
+                                            Toast.makeText(requireContext(), "Errore imprevisto", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                            }
+                        // AlertDialog Builder class
+                        val dialog: AlertDialog.Builder = builder
+                        dialog.show()
                     }
                 }
                 true

@@ -58,17 +58,6 @@ data class CARecipe(
         )
     }
 
-    // TODO: modificare la lista della spesa per ottenere anche le porzioni
-    fun toGroceryList() : String {
-        var groceryList = StringBuilder()
-        for(ingredient : CAIngredient in ingredients) {
-            val newLine : String = System.getProperty("line.separator")
-            groceryList.append("${ingredient.name} - ${ingredient.amount}${ingredient.unit}$newLine")
-        }
-
-        return groceryList.toString().trim()
-    }
-
     override fun toString() : String {
         return "Image URL: $imageURL\nTitle: $title\nIngredients count: ${ingredients.size}\ntime: $time\ndifficulty: $difficulty\ncost: $cost\nprocess: $process\nnumOfPerson: $numOfPerson"
     }

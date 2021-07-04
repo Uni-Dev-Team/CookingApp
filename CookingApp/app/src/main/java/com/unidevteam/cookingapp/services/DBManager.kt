@@ -1,5 +1,6 @@
 package com.unidevteam.cookingapp.services
 
+import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -39,6 +40,15 @@ class DBManager {
             val recipeMap : Map<String, Any> = recipe.toHashMap()
 
             return recipesRef.add(recipeMap)
+        }
+
+        fun getRecipe(recipe: CARecipe) : Task<QuerySnapshot> {
+            Log.e("DBManager", FirebaseAuth.getInstance().currentUser!!.uid)
+            return recipesRef.whereEqualTo("chefUID", FirebaseAuth.getInstance().currentUser!!.uid).whereEqualTo("title", recipe.title).get()
+        }
+
+        fun removeRecipe(recipeDocumentId: String) : Task<Void> {
+            return recipesRef.document(recipeDocumentId).delete()
         }
 
         // Reviews related methods
