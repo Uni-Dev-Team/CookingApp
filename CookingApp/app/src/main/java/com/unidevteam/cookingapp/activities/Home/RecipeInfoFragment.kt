@@ -1,8 +1,6 @@
 package com.unidevteam.cookingapp.activities.Home
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -13,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.unidevteam.cookingapp.R
 import com.unidevteam.cookingapp.models.CAIngredient
@@ -92,10 +89,26 @@ class RecipeInfoFragment : Fragment() {
 
             // Lista della spesa
             viewOfLayout.findViewById<Button>(R.id.recipeActionMenuButton).setOnClickListener{ view ->
-                var myClipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
+                /*var myClipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
                 val clip: ClipData = ClipData.newPlainText("simple text", rec.ingredientsString)
 
-                myClipboard.setPrimaryClip(clip)
+                myClipboard.setPrimaryClip(clip)*/
+
+                val popup = PopupMenu(requireContext(), viewOfLayout.findViewById<Button>(R.id.recipeActionMenuButton))
+                //Inflating the Popup using xml file
+                popup.menuInflater.inflate(R.menu.menu_main, popup.menu)
+
+
+                popup.setOnMenuItemClickListener({
+                    if (it.itemId == R.id.shoppinglist) {
+                        Toast.makeText(requireContext(), "One", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "None", Toast.LENGTH_SHORT).show()
+                    }
+                    true
+                })
+
+                popup.show()//showing popup men
             }
         }
 
