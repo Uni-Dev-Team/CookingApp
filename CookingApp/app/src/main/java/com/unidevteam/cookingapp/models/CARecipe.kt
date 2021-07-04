@@ -30,11 +30,11 @@ data class CARecipe(
     }
 
     override fun describeContents(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     override fun writeToParcel(dest: Parcel?, flags: Int) {
-        TODO("Not yet implemented")
+        dest!!.writeStringArray(arrayOf(imageURL, title, time, difficulty, cost, process, numOfPerson.toString(), likes.toString(), chefUID))
     }
 
     fun toHashMap() : HashMap<String, Any> {
@@ -93,6 +93,16 @@ data class CARecipe(
                 likes = Integer.parseInt(data["likes"].toString()),
                 chefUID = data["chefUID"].toString(),
             )
+        }
+
+        fun toGroceryList(ings: MutableList<CAIngredient>) : String {
+            var groceryList = StringBuilder()
+            for(ingredient : CAIngredient in ings) {
+                val newLine : String = System.getProperty("line.separator")
+                groceryList.append("${ingredient.name} - ${ingredient.amount}${ingredient.unit}$newLine")
+            }
+
+            return groceryList.toString().trim()
         }
 
         private val TAG = "Recipe"
