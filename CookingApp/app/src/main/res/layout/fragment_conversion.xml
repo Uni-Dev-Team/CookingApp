@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="30dp">
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Conversione"
+        android:textColor="@color/browser_actions_text_color"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView13"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Da"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+    <LinearLayout
+        android:id="@+id/toLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+        <Spinner
+            android:id="@+id/fromIngredientSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1" />
+
+        <Spinner
+            android:id="@+id/fromUnitSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/fromIngredientAmountValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_border_edittext"
+        android:ems="10"
+        android:gravity="top"
+        android:hint="Inserisci il valore da convertire"
+        android:inputType="textPersonName"
+        android:minHeight="100dp"
+        android:minLines="5"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="10dp"
+        android:textColorHighlight="@color/redOrangeLight"
+        android:textColorLink="@color/redOrange"
+        android:theme="@style/EditTextTheme"
+        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toLayout" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="32dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fromIngredientAmountValue" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="A"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView15">
+
+        <Spinner
+            android:id="@+id/toIngredientSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1" />
+
+        <Spinner
+            android:id="@+id/toUnitSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_weight="2" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/toIngredientAmountValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:background="@drawable/rounded_border_edittext"
+        android:editable="false"
+        android:ems="10"
+        android:gravity="top"
+        android:hint="Risultato della conversione"
+        android:inputType="textPersonName"
+        android:minHeight="100dp"
+        android:minLines="5"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="10dp"
+        android:textColorHighlight="@color/redOrangeLight"
+        android:textColorLink="@color/redOrange"
+        android:theme="@style/EditTextTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0"
+        android:text="Converti"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:cornerRadius="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toIngredientAmountValue" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -59,7 +59,7 @@ class AddRecipeFragment : Fragment() {
 
         val difficultyItems = listOf<String>("Facile", "Normale", "Difficile")
         val costItems = listOf<String>("Basso", "Medio", "Alto")
-        val unitItems = listOf<String>("g", "oz", "qt", "qb", "l", "cl", "ml")
+        val unitItems = listOf<String>("g", "qt", "ml", "cl", "l", "cup", "tbs")
 
         val typePortataItems = listOf("Generale", "Antipasto", "Primo", "Secondo", "Dolce")
         val typologyItems = listOf("Tutto", "Carne", "Pesce", "Vegetariano", "Vegano")

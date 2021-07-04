@@ -19,6 +19,7 @@ class HomeActivity : AppCompatActivity() {
         val homeFragment = HomeFragment()
         val addRecipeFragment = AddRecipeFragment()
         val profileFragment = ProfileFragment()
+        val conversionFragment = ConversionFragment()
 
         setCurrentFragment(homeFragment)
 
@@ -32,6 +33,9 @@ class HomeActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> {
                     setCurrentFragment(profileFragment)
+                }
+                R.id.nav_conversion -> {
+                    setCurrentFragment(conversionFragment)
                 }
             }
             true
