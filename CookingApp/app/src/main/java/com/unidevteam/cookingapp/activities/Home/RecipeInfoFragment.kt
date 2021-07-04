@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.media.Image
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,6 +16,7 @@ import android.widget.*
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.unidevteam.cookingapp.R
+import com.unidevteam.cookingapp.models.CAIngredient
 import com.unidevteam.cookingapp.models.CARecipe
 import java.net.URL
 import java.util.concurrent.Executors
@@ -30,6 +30,26 @@ class RecipeInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewOfLayout = inflater.inflate(R.layout.recipe_info_fragment, container, false)
+
+        val numOfPersonValues : List<String> = listOf(
+            "1 persona",
+            "2 persone",
+            "3 persone",
+            "4 persone",
+            "5 persone",
+            "6 persone",
+            "7 persone",
+            "8 persone",
+            "9 persone",
+            "10 persone",
+        )
+
+        val numOfPersonAdapter : ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, numOfPersonValues)
+        viewOfLayout.findViewById<Spinner>(R.id.numberOfPersonSpinner).adapter = numOfPersonAdapter
+
+        val ingredientsListViewItems : MutableList<String> = mutableListOf()
+        val ingredientsListViewAdapter : ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ingredientsListViewItems)
+        viewOfLayout.findViewById<ListView>(R.id.ingredientsListView).adapter = ingredientsListViewAdapter
 
         viewOfLayout.findViewById<Button>(R.id.goBackButton).setOnClickListener {
             activity?.onBackPressed();
@@ -61,14 +81,18 @@ class RecipeInfoFragment : Fragment() {
 
             viewOfLayout.findViewById<TextView>(R.id.processTextValue).text = rec.process
 
-
             // TODO: popolare lo spinner e la list view
+            viewOfLayout.findViewById<Spinner>(R.id.numberOfPersonSpinner).setSelection(rec.numOfPerson+1)
 
-
+            for(ingredient : CAIngredient in rec.ingredients) {
+                val value = "${ingredient.name} - ${ingredient.amount}${ingredient.unit}"
+                ingredientsListViewItems.add(value)
+            }
+            ingredientsListViewAdapter.notifyDataSetChanged()
 
             // Lista della spesa
             viewOfLayout.findViewById<Button>(R.id.recipeActionMenuButton).setOnClickListener{ view ->
-                var myClipboard = getSystemService(context!!, ClipboardManager::class.java) as ClipboardManager
+                var myClipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
                 val clip: ClipData = ClipData.newPlainText("simple text", rec.ingredientsString)
 
                 myClipboard.setPrimaryClip(clip)

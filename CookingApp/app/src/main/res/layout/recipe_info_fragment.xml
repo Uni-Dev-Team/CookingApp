@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingHorizontal="20dp"
-    android:paddingTop="15dp">
+    android:layout_height="match_parent">
 
     <Button
         android:id="@+id/goBackButton"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
         android:backgroundTint="@android:color/transparent"
         android:hapticFeedbackEnabled="false"
         app:icon="@drawable/ic_round_arrow_back_24"
@@ -26,6 +25,7 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginRight="20dp"
         android:backgroundTint="@android:color/transparent"
         android:hapticFeedbackEnabled="false"
         app:icon="@drawable/ic_baseline_more_vert_24"
@@ -35,169 +35,162 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/recipeCoverImageView"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/recipeInfoNestedScrollView"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/recipeTitleInfoTextView"
-        app:layout_constraintEnd_toStartOf="@+id/recipeActionMenuButton"
-        app:layout_constraintStart_toEndOf="@+id/goBackButton"
-        app:layout_constraintTop_toBottomOf="@+id/recipeActionMenuButton"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/recipeTitleInfoTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Titolo ricetta"
-        android:textColor="@color/browser_actions_text_color"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@+id/recipeActionMenuButton"
-        app:layout_constraintStart_toEndOf="@+id/goBackButton"
-        app:layout_constraintTop_toBottomOf="@+id/recipeCoverImageView"
-        app:layout_constraintBottom_toTopOf="@+id/recipeInfoValuesLayout"
-        />
-
-    <LinearLayout
-        android:id="@+id/recipeInfoValuesLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="80dp"
+        android:fillViewport="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recipeTitleInfoTextView"
-        app:layout_constraintBottom_toTopOf="@+id/ingredientsTitleText"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recipeActionMenuButton">
 
         <LinearLayout
-            android:id="@+id/recipeTimeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="30dp"
+            android:paddingBottom="100dp">
 
             <ImageView
-                android:id="@+id/timeIconImageView"
-                android:layout_width="35dp"
-                android:layout_height="25dp"
-                app:srcCompat="@drawable/ic_round_timer_24" />
+                android:id="@+id/recipeCoverImageView"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
-                android:id="@+id/timeValueTextView"
+                android:id="@+id/recipeTitleInfoTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="Titolo ricetta"
+                android:textColor="@color/browser_actions_text_color"
+                android:textSize="24sp" />
+
+            <LinearLayout
+                android:id="@+id/recipeInfoValuesLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/recipeTimeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/timeIconImageView"
+                        android:layout_width="35dp"
+                        android:layout_height="25dp"
+                        app:srcCompat="@drawable/ic_round_timer_24" />
+
+                    <TextView
+                        android:id="@+id/timeValueTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30m"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/recipeDifficultyLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/difficultyIconImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        app:srcCompat="@drawable/ic_round_equalizer_24" />
+
+                    <TextView
+                        android:id="@+id/difficultyValueTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Facile"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/recipeCostLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/costIconImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        app:srcCompat="@drawable/ic_round_euro_24" />
+
+                    <TextView
+                        android:id="@+id/costValueTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Basso"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/ingredientsTitleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:text="Ingredienti"
+                    android:textColor="@color/browser_actions_text_color"
+                    android:textSize="20sp" />
+
+                <Spinner
+                    android:id="@+id/numberOfPersonSpinner"
+                    android:layout_width="160dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/ingredientsListView"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="true">
+
+            </ListView>
+
+            <TextView
+                android:id="@+id/processTitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="30m"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/recipeDifficultyLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="10dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/difficultyIconImageView"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                app:srcCompat="@drawable/ic_round_equalizer_24" />
+                android:layout_marginTop="32dp"
+                android:text="Procedimento"
+                android:textColor="@color/browser_actions_text_color"
+                android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/difficultyValueTextView"
+                android:id="@+id/processTextValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Facile"
+                android:layout_marginTop="8dp"
+                android:text="TextView"
                 android:textSize="16sp" />
+
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/recipeCostLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/costIconImageView"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                app:srcCompat="@drawable/ic_round_euro_24" />
-
-            <TextView
-                android:id="@+id/costValueTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Basso"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/ingredientsTitleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Ingredienti"
-        android:textColor="@color/browser_actions_text_color"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recipeInfoValuesLayout" />
-
-    <TextView
-        android:id="@+id/textView13"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:text="N. Persone"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/numberOfPersonSpinner"
-        app:layout_constraintTop_toBottomOf="@+id/recipeInfoValuesLayout" />
-
-    <Spinner
-        android:id="@+id/numberOfPersonSpinner"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recipeInfoValuesLayout" />
-
-    <ListView
-        android:id="@+id/ingredientsListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/numberOfPersonSpinner" />
-
-    <TextView
-        android:id="@+id/processTitleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Procedimento"
-        android:textColor="@color/browser_actions_text_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/processTextValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ingredientsListView" />
-
-    <TextView
-        android:id="@+id/processTextValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/processTitleText" />
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

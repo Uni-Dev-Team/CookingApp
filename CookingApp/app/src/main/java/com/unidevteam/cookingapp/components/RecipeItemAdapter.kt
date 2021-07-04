@@ -36,7 +36,7 @@ class RecipeItemAdapter(context: Context, private val recipes: MutableList<CARec
 
         rowView.findViewById<TextView>(R.id.recipeTitleTextView).text = allRecipes!![position].title
 
-        rowView.findViewById<TextView>(R.id.timeValueTextView).text = allRecipes!![position].time
+        rowView.findViewById<TextView>(R.id.timeValueTextView).text = "${allRecipes!![position].time}m"
         rowView.findViewById<TextView>(R.id.difficultyValueTextView).text = allRecipes!![position].difficulty
         rowView.findViewById<TextView>(R.id.costValueTextView).text = allRecipes!![position].cost
 
