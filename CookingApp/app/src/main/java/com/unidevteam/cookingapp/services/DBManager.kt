@@ -28,6 +28,10 @@ class DBManager {
 
         // Recipes related methods
         fun getRecipesData(batchSize: Long) : Task<QuerySnapshot> {
+            // Get recipes of current user
+            // return recipesRef.whereEqualTo("chefUID", FirebaseAuth.getInstance().currentUser!!.uid).get()
+
+            // Get all recipes
             return recipesRef.limit(batchSize).get()
         }
 
