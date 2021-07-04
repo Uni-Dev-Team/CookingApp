@@ -368,7 +368,7 @@ class AddRecipeFragment : Fragment() {
             // ...
             Log.d(TAG, "Success: ${taskSnapshot.metadata}")
 
-            // TODO: Cambiare reference per il caricamento dell' img della ricetta
+
             val downloadURLTask = storageRef.child("recipePics/${user.uid}/$imageName").downloadUrl
             downloadURLTask.addOnSuccessListener { downloadURL ->
                 recipe.imageURL = downloadURL.toString()
