@@ -2,6 +2,7 @@ package com.unidevteam.cookingapp.activities.Home
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
@@ -20,6 +21,7 @@ import java.util.concurrent.Executors
 
 class RecipeInfoFragment : Fragment() {
     private lateinit var viewOfLayout : View
+    private lateinit var recepie: CARecipe;
     @SuppressLint("SetTextI18n", "CutPasteId", "UseRequireInsteadOfGet")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +56,7 @@ class RecipeInfoFragment : Fragment() {
 
         arguments?.getParcelable<CARecipe>("recipe")?.let {
             val rec : CARecipe = it
+            recepie = it
             Log.e(TAG, rec.title)
 
             // Image Download
@@ -113,6 +116,19 @@ class RecipeInfoFragment : Fragment() {
         }
 
         return viewOfLayout
+    }
+    // TODO:  Funzione lista della spesa da chiamare
+    private fun shareShoppingList() {
+        val myIntent: Intent = Intent(Intent.ACTION_SEND)
+        myIntent.type = "text/plain";
+        val body: String = "Lista della Spesa: "
+        var sub: String = ""
+        for (ingredient: CAIngredient in recepie.ingredients){
+            sub+= "${ingredient.name} - ${ingredient.amount}${ingredient.unit} \n"
+        }
+        myIntent.putExtra(Intent.EXTRA_SUBJECT,sub)
+        myIntent.putExtra(Intent.EXTRA_TEXT,body)
+        startActivity(Intent.createChooser(myIntent, "Condividi usando: "))
     }
 
     companion object {
