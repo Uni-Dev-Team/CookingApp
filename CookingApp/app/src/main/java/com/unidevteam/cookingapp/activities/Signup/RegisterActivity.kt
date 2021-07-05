@@ -67,74 +67,78 @@ class RegisterActivity : AppCompatActivity() {
             } else if(viewPager.currentItem == 1) {
                 val password1 = findViewById<TextView>(R.id.tf_password_1).text.toString()
                 val password2 = findViewById<TextView>(R.id.tf_password_2).text.toString()
-                if(password1.isNotEmpty() && password2.isNotEmpty() && password1 == password2 && SyntaxManager.passValidator(
+                if(password1.isNotEmpty() && password2.isNotEmpty() && SyntaxManager.passValidator(
                         password1
                     )
                 ) {
-                    Log.d(TAG, "Password 1: $password1")
-                    Log.d(TAG, "Password 2: $password2")
-                    _password = password1
+                    if(password1 == password2) {
+                        Log.d(TAG, "Password 1: $password1")
+                        Log.d(TAG, "Password 2: $password2")
+                        _password = password1
 
-                    if (auth.currentUser == null) {
-                        firebaseCreateUser(_email, _password)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Firebase.storage.reference.child("profilePics/defaultProfile.png").downloadUrl
-                                        .addOnCompleteListener { urlTask ->
-                                            Log.d(TAG, "Registration: User created correctly")
-                                            auth.currentUser?.let { it1 ->
-                                                firebaseSendPasswordVerification(
-                                                    it1
+                        if (auth.currentUser == null) {
+                            firebaseCreateUser(_email, _password)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Firebase.storage.reference.child("profilePics/defaultProfile.png").downloadUrl
+                                            .addOnCompleteListener { urlTask ->
+                                                Log.d(TAG, "Registration: User created correctly")
+                                                auth.currentUser?.let { it1 ->
+                                                    firebaseSendPasswordVerification(
+                                                        it1
+                                                    )
+                                                }
+
+                                                Log.d(TAG, "Email inserita: $_email")
+                                                Log.d(TAG, "Nome inserito: ${_name.split(' ')[0]}")
+                                                Log.d(TAG, "Cognome inserito: ${_name.split(' ')[1]}")
+
+                                                val caUser : CAUser = CAUser(
+                                                    imageURL = urlTask.result.toString(),
+                                                    email = _email,
+                                                    name = _name.split(' ')[0],
+                                                    surname = _name.split(' ')[1],
+                                                    bio = "Ciao! Sono un nuovo cuoco di CookingApp!"
                                                 )
-                                            }
 
-                                            Log.d(TAG, "Email inserita: $_email")
-                                            Log.d(TAG, "Nome inserito: ${_name.split(' ')[0]}")
-                                            Log.d(TAG, "Cognome inserito: ${_name.split(' ')[1]}")
+                                                DBManager.saveUserInfo(caUser)
+                                                    .addOnCompleteListener {
+                                                        Log.d(TAG, "Dati extra dell'utente salvati correttamente")
 
-                                            val caUser : CAUser = CAUser(
-                                                imageURL = urlTask.result.toString(),
-                                                email = _email,
-                                                name = _name.split(' ')[0],
-                                                surname = _name.split(' ')[1],
-                                                bio = "Ciao! Sono un nuovo cuoco di CookingApp!"
-                                            )
+                                                        val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).setPhotoUri(urlTask.result).build()
 
-                                            DBManager.saveUserInfo(caUser)
-                                                .addOnCompleteListener {
-                                                    Log.d(TAG, "Dati extra dell'utente salvati correttamente")
-
-                                                    val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(_name).setPhotoUri(urlTask.result).build()
-
-                                                    auth.currentUser!!.updateProfile(profileUpdates)
-                                                        .addOnCompleteListener { task2 ->
-                                                            if(task2.isSuccessful) {
-                                                                Log.d(TAG, "Log: Display-name set successively set")
-                                                                auth.signOut()
-                                                                gotoLoginPage()
-                                                            } else {
-                                                                Log.d(
-                                                                    TAG,
-                                                                    "Error: Display-name set successively failed"
-                                                                )
+                                                        auth.currentUser!!.updateProfile(profileUpdates)
+                                                            .addOnCompleteListener { task2 ->
+                                                                if(task2.isSuccessful) {
+                                                                    Log.d(TAG, "Log: Display-name set successively set")
+                                                                    auth.signOut()
+                                                                    gotoLoginPage()
+                                                                } else {
+                                                                    Log.d(
+                                                                        TAG,
+                                                                        "Error: Display-name set successively failed"
+                                                                    )
+                                                                }
                                                             }
-                                                        }
-                                                }
-                                                .addOnFailureListener {
-                                                    Log.d(TAG, "Errore nel salvataggio dei dati extra dell'utente")
-                                                }
-                                        }
-                                } else {
-                                    Log.d(TAG, "Registration: Failed - ${task.exception}")
-                                    Toast.makeText(this, "User already taken", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                    .addOnFailureListener {
+                                                        Log.d(TAG, "Errore nel salvataggio dei dati extra dell'utente")
+                                                    }
+                                            }
+                                    } else {
+                                        Log.d(TAG, "Registration: Failed - ${task.exception}")
+                                        Toast.makeText(this, "User already taken", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
-                            }
+                        } else {
+                            Log.d(TAG, "Error: User already logged")
+                            gotoLoginPage()
+                        }
                     } else {
-                        Log.d(TAG, "Error: User already logged")
-                        gotoLoginPage()
+                        Toast.makeText(this, "Le password non combaciano", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Password mismatch", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Formato password non valido", Toast.LENGTH_SHORT).show()
                 }
             }
         }

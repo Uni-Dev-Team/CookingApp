@@ -7,7 +7,7 @@ class SyntaxManager {
     companion object {
         // [START password_regex]
         fun passValidator(text: String?):Boolean{
-            val pattern: Pattern = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$ %^&*-]).{8,}\$")
+            val pattern: Pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*#?&])[A-Za-z\\d@\$!%*#?&]{8,}\$")
             val matcher: Matcher = pattern.matcher(text)
             return matcher.matches()
         }
