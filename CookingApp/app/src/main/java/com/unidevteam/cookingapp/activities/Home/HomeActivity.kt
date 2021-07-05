@@ -5,6 +5,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.unidevteam.cookingapp.R
 
 class HomeActivity : AppCompatActivity() {
@@ -17,8 +18,8 @@ class HomeActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         val homeFragment = HomeFragment()
-        val addRecipeFragment = AddRecipeFragment()
-        val profileFragment = ProfileFragment()
+        val addRecipeFragment = if (FirebaseAuth.getInstance().currentUser!!.isAnonymous) NotAllowedFragment() else  AddRecipeFragment()
+        val profileFragment = if (FirebaseAuth.getInstance().currentUser!!.isAnonymous) NotAllowedFragment() else  ProfileFragment()
         val conversionFragment = ConversionFragment()
 
         setCurrentFragment(homeFragment)
