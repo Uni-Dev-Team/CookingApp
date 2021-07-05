@@ -41,6 +41,7 @@ class AddRecipeFragment : Fragment() {
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val storage = Firebase.storage
     private var imageLoaded : Boolean = false
+    private  var documentID: String? = null
 
     @SuppressLint("CutPasteId")
     override fun onCreateView(
@@ -50,7 +51,10 @@ class AddRecipeFragment : Fragment() {
     ): View {
         viewOfLayout = inflater.inflate(R.layout.fragment_add_recipe, container, false)
 
+
         val numOfPersonItems : MutableList<String> = mutableListOf("1 persona", "2 persone", "3 persone", "4 persone", "5 persone")
+
+
 
         val timeItems : MutableList<String> = mutableListOf<String>()
         (5..60 step 5).forEach {
@@ -183,7 +187,7 @@ class AddRecipeFragment : Fragment() {
         }
 
         viewOfLayout.findViewById<ListView>(R.id.recipeIngredientsListView).onItemLongClickListener =
-            OnItemLongClickListener { arg0, arg1, pos, id -> // TODO Auto-generated method stub
+            OnItemLongClickListener { arg0, arg1, pos, id ->
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("Vuoi cancellare ${ingredientsItems[id.toInt()].toString()} ?")
                     .setPositiveButton("Sì"
@@ -245,11 +249,10 @@ class AddRecipeFragment : Fragment() {
 
                             ingredients.add(ingredient)
                         }
-
-                        val docID = DBManager.genRecipeDocumentID()
+                        val docID = if (documentID == null) DBManager.genRecipeDocumentID() else documentID
 
                         val recipe = CARecipe(
-                            docID,
+                            docID!!,
                             null,
                             recipeName,
                             ingredients,
@@ -265,7 +268,6 @@ class AddRecipeFragment : Fragment() {
                         )
                         uploadProfileImage(imageData, recipe)
 
-                        // TODO: Show loading UI
                         val bitmap : Bitmap? = BitmapFactory.decodeResource(requireContext().resources, R.mipmap.ic_recipe_cover_placeholder)
                         if(bitmap != null) coverImageView.setImageBitmap(bitmap)
 
@@ -292,6 +294,49 @@ class AddRecipeFragment : Fragment() {
             } else {
                 // Empty fields warning
                 Toast.makeText(requireContext(), "Compila tutti i campi", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        arguments?.getParcelable<CARecipe>("recipe")?.let {
+            if (!it.equals(null)){
+                val rec: CARecipe = it
+                documentID = rec.recipeID
+                Log.e(TAG, rec.title)
+
+                // Sostituzione
+
+                // Image Download
+                if (rec.imageURL == null) {
+                    viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie).setImageResource(R.drawable.ic_baseline_account_circle_80)
+                } else {
+                    val executor = Executors.newSingleThreadExecutor()
+                    val handler = Handler(Looper.getMainLooper())
+                    executor.execute {
+                        val url = URL(rec.imageURL.toString())
+                        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                        imageLoaded = true
+                        handler.post {
+                            viewOfLayout.findViewById<ImageView>(R.id.imageViewRecepie)
+                                .setImageBitmap(bmp)
+                        }
+                    }
+                }
+
+                // EditText Filling
+
+                viewOfLayout.findViewById<EditText>(R.id.recipeTitle).setText(rec.title)
+                viewOfLayout.findViewById<Spinner>(R.id.recipeTimeSpinner).setSelection(timeItems.indexOf(rec.time))
+                viewOfLayout.findViewById<Spinner>(R.id.recipeDifficultySpinner).setSelection(difficultyItems.indexOf(rec.difficulty))
+                viewOfLayout.findViewById<Spinner>(R.id.recipeCostSpinner).setSelection(costItems.indexOf(rec.cost))
+                viewOfLayout.findViewById<Spinner>(R.id.typePortataSpinner).setSelection(typePortataItems.indexOf(rec.typePortata))
+                viewOfLayout.findViewById<Spinner>(R.id.typologySpinner).setSelection(typologyItems.indexOf(rec.typology))
+                viewOfLayout.findViewById<Spinner>(R.id.numOfPeopleSpinner).setSelection(rec.numOfPerson-1)
+                viewOfLayout.findViewById<EditText>(R.id.addRecipeProcess).setText(rec.process)
+                for (ingredient in rec.ingredients) {
+                    val string: String = "${ingredient.name} - ${ingredient.amount} ${ingredient.unit}"
+                    ingredientsItems.add(string)
+                }
+                ingredientsListViewAdapter.notifyDataSetChanged()
             }
         }
 
@@ -463,6 +508,11 @@ class AddRecipeFragment : Fragment() {
     // [END camera_shot]
 
     companion object {
+        fun newInstance(recipe: CARecipe) = AddRecipeFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable("recipe", recipe)
+            }
+        }
         private const val TAG = "AddRecipeFragment"
     }
 }

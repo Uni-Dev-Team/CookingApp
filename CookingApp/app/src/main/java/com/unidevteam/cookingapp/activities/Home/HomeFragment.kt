@@ -24,7 +24,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) : View? {
+    ) : View {
         viewOfLayout = inflater.inflate(R.layout.fragment_home, container, false)
 
             val recipesList : MutableList<CARecipe> = mutableListOf()

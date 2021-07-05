@@ -121,13 +121,24 @@ class RecipeInfoFragment : Fragment() {
             popup.menuInflater.inflate(R.menu.menu_main, popup.menu)
 
             popup.setOnMenuItemClickListener{ it ->
-                when {
-                    it.itemId == R.id.edit -> {
-                        Toast.makeText(requireContext(), "Modifica ricetta", Toast.LENGTH_SHORT).show()
+                when (it.itemId) {
+                    R.id.edit -> {
+                        if(recipe.chefUID != FirebaseAuth.getInstance().currentUser!!.uid) {
+                            Toast.makeText(requireContext(), "Non sei il proprietario di questa ricetta!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            val transaction =
+                                requireActivity().supportFragmentManager.beginTransaction()
+                            transaction.replace(
+                                R.id.fl_wrapper,
+                                AddRecipeFragment.newInstance(recipe!!)
+                            )
+                            transaction.disallowAddToBackStack()
+                            transaction.commit()
+                        }
                     }
-                    it.itemId == R.id.shoppinglist -> {
+                    R.id.shoppinglist -> {
                         val intent = Intent(Intent.ACTION_SEND)
-                        intent.setType("text/plain")
+                        intent.type = "text/plain"
 
                         val numOfPersonSpinner = viewOfLayout.findViewById<Spinner>(R.id.numberOfPersonSpinner)
                         val ings : MutableList<CAIngredient> = mutableListOf()
@@ -141,7 +152,7 @@ class RecipeInfoFragment : Fragment() {
                         intent.putExtra(Intent.EXTRA_TEXT, sub)
                         startActivity(Intent.createChooser(intent, "Condividi con"))
                     }
-                    it.itemId == R.id.remove -> {
+                    R.id.remove -> {
                         if(recipe.chefUID != FirebaseAuth.getInstance().currentUser!!.uid) {
                             Toast.makeText(requireContext(), "Non sei il proprietario di questa ricetta!", Toast.LENGTH_SHORT).show()
                         } else {
